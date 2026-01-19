@@ -74,6 +74,17 @@ body::after {
   font-size: 14px;
   margin-bottom: 12px;
 }
+.energy-plus {
+  margin-left: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #5f9c7e;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
 
 /* =========================
    BOARD
