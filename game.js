@@ -18,13 +18,13 @@ function init() {
   grid.fill(0);
   score = 0;
   energy = 50;
-  spawn();
-  spawn();
+  spawnNormal();
+  spawnNormal();
   render();
 }
 
-// SPAWN 2 or 4 ALWAYS
-function spawn() {
+// NORMAL SPAWN (2 or 4)
+function spawnNormal() {
   const empty = grid
     .map((v, i) => (v === 0 ? i : null))
     .filter(v => v !== null);
@@ -33,6 +33,18 @@ function spawn() {
 
   const pos = empty[Math.floor(Math.random() * empty.length)];
   grid[pos] = Math.random() < 0.7 ? 2 : 4;
+}
+
+// MERGE SPAWN (ONLY 2)
+function spawnAfterMerge() {
+  const empty = grid
+    .map((v, i) => (v === 0 ? i : null))
+    .filter(v => v !== null);
+
+  if (!empty.length) return;
+
+  const pos = empty[Math.floor(Math.random() * empty.length)];
+  grid[pos] = 2;
 }
 
 // RENDER
@@ -61,7 +73,7 @@ function onCellClick(i) {
   if (clearMode) {
     grid[i] = 0;
     clearMode = false;
-    spawn();
+    spawnNormal();
     render();
     return;
   }
@@ -82,7 +94,7 @@ function onCellClick(i) {
       score += grid[i];
       grid[selected] = 0;
       energy--;
-      spawn();
+      spawnAfterMerge(); // ❗ faqat 2
     }
     selected = null;
   }
@@ -95,7 +107,7 @@ function watchAd(seconds, cb) {
   setTimeout(cb, seconds * 1000);
 }
 
-// CLEAR BUTTON
+// CLEAR BUTTON (only if full)
 clearBtn.onclick = () => {
   if (grid.includes(0)) return;
   watchAd(5, () => {
@@ -104,14 +116,14 @@ clearBtn.onclick = () => {
   });
 };
 
-// BOOST BUTTON
+// BOOST BUTTON (2 ads)
 boostBtn.onclick = () => {
   if (selected === null) return;
   watchAd(5, () => {
     watchAd(5, () => {
       grid[selected] *= 2;
       score += grid[selected];
-      spawn();
+      spawnAfterMerge();
       selected = null;
       render();
     });
