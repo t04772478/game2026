@@ -8,55 +8,41 @@
 </head>
 <body>
 
-<div class="game-container">
+<div class="overlay"></div>
 
-  <!-- TOP -->
+<div class="app">
   <div class="top-bar">
-    <div>Score: <span id="score">0</span></div>
-
+    <div class="title">2026</div>
     <div class="energy">
       ⚡ <span id="energy">50</span>
       <button id="energyPlus">+</button>
     </div>
-
     <button id="helpBtn">?</button>
   </div>
 
-  <!-- GRID -->
-  <div id="board"></div>
+  <div id="grid" class="grid"></div>
 
-  <!-- BUTTONS -->
-  <div class="controls">
-    <button id="freeBtn">Bo‘sh joy</button>
-    <button id="x2Btn">x2 (<span id="x2Left">3</span>)</button>
-    <button id="donateBtn">❤️ Donat</button>
+  <div class="panel">
+    <button id="emptyBtn" class="btn blue">Bo‘sh joy</button>
+    <button id="x2Btn" class="btn green">x2</button>
+    <button id="donateBtn" class="btn red">❤️ Donat</button>
   </div>
 
+  <div class="hint">
+    Bir xil sonni bos → yana bir xilini bos → birlashadi
+  </div>
 </div>
 
-<!-- HELP -->
-<div id="helpOverlay" style="display:none">
-  <div class="help-content">
-    <h3>O‘yin qo‘llanmasi</h3>
+<div id="helpModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>O‘yin qo‘llanmasi</h2>
     <p>
-      • Bir xil sonni bosib birlashtiring<br>
-      • Har merge’dan keyin yangi 2 lar chiqadi<br><br>
-      ⚡ Energiya:
-      • Har 30 daqiqada +1<br>
-      • Reklama orqali +20<br>
-      • Har 1000 score → +10 max energiya<br><br>
-      Bo‘sh joy:
-      • Faqat reklama bilan<br>
-      • Tanlangan katakni bo‘shatadi<br><br>
-      x2:
-      • 24 soatda 3 marta<br>
-      • Donat bilan +1<br><br>
-      Donat:
-      • +100 energiya<br>
-      • x2 +1<br>
-      • Barcha 16 → 32
+      • Bir xil sonlarni ketma-ket bosing — ular birlashadi<br>
+      • Har yurishda bo‘sh joyga yangi <b>2</b> chiqadi<br>
+      • Energiya har 30 daqiqada to‘ladi<br>
+      • x2 va Bo‘sh joy bonuslar orqali ishlaydi
     </p>
-    <button onclick="closeHelp()">Yopish</button>
+    <button id="closeHelp">Yopish</button>
   </div>
 </div>
 
