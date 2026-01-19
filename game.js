@@ -1,117 +1,49 @@
-/* =========================
-   2026 – SMART MERGE
-   Author: Sen + ChatGPT
-   ========================= */
+/***********************
+ * 2026 – SMART MERGE
+ * Full Stable Logic
+ ***********************/
 
-/* --------- SOZLAMALAR --------- */
 const SIZE = 4;
-const MAX_ENERGY = 50;
-const ENERGY_REWARD = 20;
+const TOTAL = SIZE * SIZE;
 
-/* --------- HOLAT --------- */
-let grid = Array(16).fill(0);
+let grid = [];
 let score = 0;
-let energy = MAX_ENERGY;
+let energy = 50;
 
 let selectedIndex = null;
 
-/* --------- DOM --------- */
-const board = document.getElementById("board");
-const scoreEl = document.getElementById("score");
-const energyEl = document.getElementById("energy");
+/* =======================
+   INIT
+======================= */
+document.addEventListener("DOMContentLoaded", () => {
+  grid = Array(TOTAL).fill(0);
+  startGame();
+});
 
-/* --------- BOSHLASH --------- */
-init();
-
-/* =========================
-   ASOSIY FUNKSIYALAR
-   ========================= */
-
-function init() {
+/* =======================
+   GAME START
+======================= */
+function startGame() {
   grid.fill(0);
   score = 0;
-  energy = MAX_ENERGY;
+  energy = 50;
   selectedIndex = null;
 
   spawnTwo();
   spawnTwo();
+
   render();
 }
 
-/* --------- RENDER --------- */
-function render() {
-  board.innerHTML = "";
-
-  grid.forEach((value, index) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-
-    if (value !== 0) {
-      cell.textContent = value;
-      cell.classList.add("v" + value);
-    }
-
-    if (index === selectedIndex) {
-      cell.classList.add("selected");
-    }
-
-    cell.onclick = () => onCellClick(index);
-    board.appendChild(cell);
-  });
-
-  scoreEl.textContent = score;
-  energyEl.textContent = energy;
-}
-
-/* =========================
-   O‘YIN MANTIQI
-   ========================= */
-
-function onCellClick(index) {
-  if (grid[index] === 0) return;
-
-  if (selectedIndex === null) {
-    selectedIndex = index;
-    render();
-    return;
-  }
-
-  if (selectedIndex === index) {
-    selectedIndex = null;
-    render();
-    return;
-  }
-
-  tryMerge(selectedIndex, index);
-  selectedIndex = null;
-  render();
-}
-
-/* --------- BIRLASHTIRISH --------- */
-function tryMerge(from, to) {
-  if (energy <= 0) return;
-
-  if (grid[from] === grid[to]) {
-    grid[to] *= 2;
-    grid[from] = 0;
-
-    score += grid[to];
-    energy--;
-
-    spawnTwo();
-    ensurePlayable();
-  }
-}
-
-/* =========================
-   AVTO YORDAM
-   ========================= */
-
-/* Har doim bo‘sh joyga 2 chiqadi */
+/* =======================
+   SPAWN ONLY 2
+======================= */
 function spawnTwo() {
-  const empty = grid
-    .map((v, i) => (v === 0 ? i : null))
-    .filter(v => v !== null);
+  const empty = [];
+
+  for (let i = 0; i < TOTAL; i++) {
+    if (grid[i] === 0) empty.push(i);
+  }
 
   if (empty.length === 0) return;
 
@@ -119,39 +51,65 @@ function spawnTwo() {
   grid[index] = 2;
 }
 
-/* Agar merge bo‘lmasa — yana 2 qo‘shiladi */
-function ensurePlayable() {
-  if (!hasMerge()) {
-    spawnTwo();
+/* =======================
+   CLICK HANDLER
+======================= */
+function onCellClick(index) {
+  if (grid[index] === 0) return;
+
+  // First select
+  if (selectedIndex === null) {
+    selectedIndex = index;
+    render();
+    return;
   }
+
+  // Same cell → cancel
+  if (selectedIndex === index) {
+    selectedIndex = null;
+    render();
+    return;
+  }
+
+  // Try merge
+  tryMerge(selectedIndex, index);
 }
 
-/* Maydonda merge bormi */
-function hasMerge() {
-  const counts = {};
-  grid.forEach(v => {
-    if (v > 0) counts[v] = (counts[v] || 0) + 1;
-  });
+/* =======================
+   MERGE LOGIC
+======================= */
+function tryMerge(from, to) {
+  if (grid[from] !== grid[to]) {
+    selectedIndex = null;
+    render();
+    return;
+  }
 
-  return Object.values(counts).some(c => c >= 2);
+  const newValue = grid[to] * 2;
+
+  grid[to] = newValue;
+  grid[from] = 0;
+
+  score += newValue;
+  energy = Math.max(energy - 1, 0);
+
+  selectedIndex = null;
+
+  spawnTwo();
+  render();
 }
 
-/* =========================
-   MENU TUGMALARI
-   ========================= */
-
-/* Bo‘sh joy ochish */
-window.freeCell = function () {
+/* =======================
+   EMPTY CELL BUTTON
+======================= */
+function useEmptyCell() {
   if (energy < 5) {
-    watchAd(() => {
-      energy += ENERGY_REWARD;
-      render();
-    });
+    alert("Reklama ko‘rib energiya oling");
     return;
   }
 
   const filled = grid
-    .map((v, i) => (v !== 0 ? i : null))
+    .map((v, i) => v !== 0 ? i : null)
     .filter(v => v !== null);
 
   if (filled.length === 0) return;
@@ -159,49 +117,61 @@ window.freeCell = function () {
   const index = filled[Math.floor(Math.random() * filled.length)];
   grid[index] = 0;
   energy -= 5;
+
   spawnTwo();
   render();
-};
+}
 
-/* X2 qilish */
-window.doubleTile = function () {
-  if (energy < 10) {
-    watchAd(() => {
-      energy += ENERGY_REWARD;
-      render();
-    });
+/* =======================
+   X2 BUTTON
+======================= */
+function useX2() {
+  if (energy < 10 || selectedIndex === null) {
+    alert("Avval katak tanlang");
     return;
   }
 
-  if (selectedIndex === null) return;
-
   grid[selectedIndex] *= 2;
-  score += grid[selectedIndex];
   energy -= 10;
 
-  spawnTwo();
-  ensurePlayable();
+  selectedIndex = null;
   render();
-};
-
-/* Donat */
-window.donate = function () {
-  watchLongAd(() => {
-    energy += 50;
-    render();
-  });
-};
-
-/* =========================
-   REKLAMA (SIMULYATSIYA)
-   ========================= */
-
-function watchAd(callback) {
-  alert("5 soniyalik reklama...");
-  setTimeout(callback, 5000);
 }
 
-function watchLongAd(callback) {
-  alert("Uzun reklama / donat...");
-  setTimeout(callback, 8000);
+/* =======================
+   DONATE (PLACEHOLDER)
+======================= */
+function donate() {
+  alert("Reklama → Donat (keyin ulanadi)");
+}
+
+/* =======================
+   RENDER
+======================= */
+function render() {
+  const board = document.getElementById("board");
+  const scoreEl = document.getElementById("score");
+  const energyEl = document.getElementById("energy");
+
+  board.innerHTML = "";
+
+  grid.forEach((value, i) => {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+
+    if (value > 0) {
+      cell.textContent = value;
+      cell.classList.add("v" + value);
+    }
+
+    if (i === selectedIndex) {
+      cell.classList.add("selected");
+    }
+
+    cell.addEventListener("click", () => onCellClick(i));
+    board.appendChild(cell);
+  });
+
+  scoreEl.textContent = score;
+  energyEl.textContent = energy;
 }
