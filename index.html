@@ -12,20 +12,18 @@
   <div class="game-container">
     <div class="title">2026</div>
 
-    <div class="info">
-
+   <div class="info">
   ⚡ <span id="energy">50</span>
-  <button onclick="addEnergyByAd()" class="energy-plus">+</button>
+  <button class="energy-plus" onclick="addEnergyByAd()">+</button>
+</div>
 
-
-    </div>
 
     <!-- BOARD -->
     <div id="board"></div>
 
     <!-- CONTROLS -->
     <div class="controls">
-      <button onclick="useEmptyCell()">Bo‘sh joy</button>
+      <button onclick="useReplace()">🔄</button>
       <button onclick="useX2()">x2</button>
       <button onclick="donate()">❤️ Donat</button>
     </div>
