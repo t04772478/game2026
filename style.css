@@ -1,175 +1,198 @@
-/* RESET */
+/* =========================
+   GLOBAL RESET
+========================= */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
-/* BACKGROUND – GTA 6 NIGHT CITY */
+/* =========================
+   BODY + BACKGROUND
+========================= */
 body {
-  height: 100vh;
-  font-family: 'Segoe UI', system-ui, -apple-system;
-  background:
-    radial-gradient(circle at top, #1b0036, #05010d 60%),
-    linear-gradient(180deg, #0b0018, #020107);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #e5e7eb;
-}
-body {
-  background: url("bg.jpg") no-repeat center center fixed;
-  background-size: cover;
+  min-height: 100vh;
+  background: #000;
+  overflow-x: hidden;
 }
 
+/* GTA BACKGROUND */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("bg.jpg") center / cover no-repeat;
+  z-index: 0;
+}
 
-/* APP CARD */
-.app {
-  width: 360px;
+/* DARK OVERLAY */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
   background: linear-gradient(
-    180deg,
-    rgba(30, 5, 60, 0.9),
-    rgba(10, 2, 20, 0.95)
+    to bottom,
+    rgba(10, 10, 30, 0.65),
+    rgba(10, 10, 20, 0.85)
   );
-  border-radius: 26px;
+  z-index: 1;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+.game-container {
+  position: relative;
+  z-index: 10;
+  max-width: 420px;
+  margin: 40px auto;
   padding: 18px;
+  border-radius: 24px;
+  background: rgba(15, 20, 40, 0.85);
   box-shadow:
-    0 0 40px rgba(167, 79, 255, 0.25),
-    0 0 80px rgba(79, 70, 229, 0.15);
+    0 0 40px rgba(80, 120, 255, 0.35),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
 }
 
-/* HEADER */
-header {
+/* =========================
+   HEADER
+========================= */
+.title {
   text-align: center;
-}
-
-h1 {
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 800;
-  letter-spacing: 2px;
-  background: linear-gradient(90deg, #a855f7, #38bdf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #7aa2ff;
+  margin-bottom: 8px;
 }
 
-/* STATS */
-.stats {
-  margin-top: 6px;
+.info {
   display: flex;
   justify-content: space-between;
+  color: #fff;
   font-size: 14px;
-  color: #c4b5fd;
+  margin-bottom: 12px;
 }
 
-/* GAME GRID */
-.grid {
-  margin: 16px 0;
-  padding: 14px;
-  border-radius: 22px;
+/* =========================
+   BOARD
+========================= */
+#board {
+  position: relative;
+  z-index: 20;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-
-  background:
-    linear-gradient(180deg, rgba(10, 0, 25, 0.9), rgba(5, 0, 10, 0.95));
-  box-shadow:
-    inset 0 0 0 2px rgba(168, 85, 247, 0.25),
-    0 0 30px rgba(79, 70, 229, 0.25);
+  padding: 12px;
+  background: rgba(10, 15, 35, 0.9);
+  border-radius: 18px;
 }
 
-/* CELL BASE */
+/* =========================
+   CELL
+========================= */
 .cell {
-  height: 70px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #05010d, #0a0215);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  background: rgba(30, 40, 70, 0.9);
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-weight: 900;
-  font-size: 22px;
+  justify-content: center;
+
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 800;
+
   cursor: pointer;
-  color: #e5e7eb;
+  user-select: none;
 
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.04),
-    0 8px 18px rgba(0,0,0,0.6);
+    inset 0 0 12px rgba(255, 255, 255, 0.08),
+    0 6px 14px rgba(0, 0, 0, 0.4);
 
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.15s ease;
 }
 
-/* HOVER / SELECT */
-.cell:hover {
-  transform: translateY(-2px);
+/* EMPTY */
+.cell:empty {
+  background: rgba(20, 30, 55, 0.6);
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.03);
 }
 
-.cell.active {
-  outline: 3px solid #38bdf8;
+/* SELECTED */
+.cell.selected {
+  outline: 3px solid #4da3ff;
   box-shadow:
-    0 0 20px rgba(56,189,248,0.8),
-    0 0 40px rgba(168,85,247,0.6);
-  transform: scale(1.08);
+    0 0 18px rgba(77, 163, 255, 0.9),
+    inset 0 0 12px rgba(255,255,255,0.15);
 }
 
-/* NUMBER COLORS – NEON PROGRESSION */
-.cell[v="2"]    { background: linear-gradient(180deg, #111827, #020617); }
-.cell[v="4"]    { background: linear-gradient(180deg, #1e1b4b, #020617); }
-.cell[v="8"]    { background: linear-gradient(180deg, #312e81, #020617); }
-.cell[v="16"]   { background: linear-gradient(180deg, #4338ca, #020617); }
-.cell[v="32"]   { background: linear-gradient(180deg, #4f46e5, #020617); }
-.cell[v="64"]   { background: linear-gradient(180deg, #6366f1, #020617); }
-.cell[v="128"]  { background: linear-gradient(180deg, #8b5cf6, #020617); }
-.cell[v="256"]  { background: linear-gradient(180deg, #a855f7, #020617); }
-.cell[v="512"]  { background: linear-gradient(180deg, #d946ef, #020617); }
-.cell[v="1024"] { background: linear-gradient(180deg, #ec4899, #020617); }
+/* =========================
+   NUMBER COLORS
+========================= */
+.v2   { background: #3b4a7a; }
+.v4   { background: #445fa0; }
+.v8   { background: #4a7aff; }
+.v16  { background: #5a9cff; }
+.v32  { background: #ff8a3d; }
+.v64  { background: #ff6b2d; }
+.v128 { background: #ff4d4d; }
+.v256 { background: #ff2f6d; }
+.v512 { background: #d92cff; }
 
-/* MENU */
-.menu {
+/* =========================
+   CONTROLS
+========================= */
+.controls {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-top: 14px;
 }
 
-.menu button {
+.controls button {
   flex: 1;
-  padding: 10px;
   border: none;
+  padding: 10px 0;
   border-radius: 14px;
-  font-size: 13px;
   font-weight: 700;
-  color: #e5e7eb;
+  color: #fff;
   cursor: pointer;
-
-  background: linear-gradient(180deg, #1e1b4b, #020617);
-  box-shadow:
-    0 0 10px rgba(168,85,247,0.4),
-    inset 0 0 0 1px rgba(255,255,255,0.06);
-
-  transition: transform .15s, box-shadow .15s;
+  background: linear-gradient(135deg, #3a7bfd, #5e9cff);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-.menu button:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 20px rgba(56,189,248,0.8),
-    inset 0 0 0 1px rgba(255,255,255,0.1);
+.controls button:nth-child(2) {
+  background: linear-gradient(135deg, #4caf50, #7ed957);
 }
 
-/* HINT */
+.controls button:nth-child(3) {
+  background: linear-gradient(135deg, #ff4d6d, #ff7a8a);
+}
+
+.controls button:active {
+  transform: scale(0.97);
+}
+
+/* =========================
+   FOOTER TEXT
+========================= */
 .hint {
   text-align: center;
   font-size: 12px;
-  color: #a5b4fc;
+  color: #cfd8ff;
+  margin-top: 10px;
 }
 
-/* MOBILE */
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width: 480px) {
-  .app {
-    width: 94vw;
+  .game-container {
+    margin: 20px 12px;
   }
-
-  .cell {
-    height: 18vw;
-    font-size: 20px;
+  .title {
+    font-size: 28px;
   }
 }
