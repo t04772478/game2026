@@ -1,6 +1,5 @@
 /***********************
- * 2026 – SMART MERGE
- * Full Stable Logic
+ * 2026 – FINAL LOGIC
  ***********************/
 
 const SIZE = 4;
@@ -9,145 +8,131 @@ const TOTAL = SIZE * SIZE;
 let grid = [];
 let score = 0;
 let energy = 50;
-
 let selectedIndex = null;
 
-/* =======================
-   INIT
-======================= */
+/* INIT */
 document.addEventListener("DOMContentLoaded", () => {
   grid = Array(TOTAL).fill(0);
   startGame();
 });
 
-/* =======================
-   GAME START
-======================= */
+/* START */
 function startGame() {
   grid.fill(0);
   score = 0;
   energy = 50;
   selectedIndex = null;
 
-  spawnTwo();
-  spawnTwo();
-
+  spawnTwos(2);
   render();
 }
 
-/* =======================
-   SPAWN ONLY 2
-======================= */
-function spawnTwo() {
-  const empty = [];
+/* SPAWN LOGIC */
+function spawnTwos(count) {
+  const empty = grid
+    .map((v, i) => v === 0 ? i : null)
+    .filter(v => v !== null);
 
-  for (let i = 0; i < TOTAL; i++) {
-    if (grid[i] === 0) empty.push(i);
+  const spawnCount = Math.min(count, empty.length);
+
+  for (let i = 0; i < spawnCount; i++) {
+    const index = empty.splice(
+      Math.floor(Math.random() * empty.length), 1
+    )[0];
+    grid[index] = 2;
   }
-
-  if (empty.length === 0) return;
-
-  const index = empty[Math.floor(Math.random() * empty.length)];
-  grid[index] = 2;
 }
 
-/* =======================
-   CLICK HANDLER
-======================= */
+/* CLICK */
 function onCellClick(index) {
   if (grid[index] === 0) return;
 
-  // First select
   if (selectedIndex === null) {
     selectedIndex = index;
     render();
     return;
   }
 
-  // Same cell → cancel
   if (selectedIndex === index) {
     selectedIndex = null;
     render();
     return;
   }
 
-  // Try merge
   tryMerge(selectedIndex, index);
 }
 
-/* =======================
-   MERGE LOGIC
-======================= */
-function tryMerge(from, to) {
-  if (grid[from] !== grid[to]) {
+/* MERGE */
+function tryMerge(a, b) {
+  if (grid[a] !== grid[b]) {
     selectedIndex = null;
     render();
     return;
   }
 
-  const newValue = grid[to] * 2;
+  const newVal = grid[b] * 2;
+  grid[b] = newVal;
+  grid[a] = 0;
 
-  grid[to] = newValue;
-  grid[from] = 0;
-
-  score += newValue;
+  score += newVal;
   energy = Math.max(energy - 1, 0);
-
   selectedIndex = null;
 
-  spawnTwo();
-  render();
-}
+  const emptyCount = grid.filter(v => v === 0).length;
 
-/* =======================
-   EMPTY CELL BUTTON
-======================= */
-function useEmptyCell() {
-  if (energy < 5) {
-    alert("Reklama ko‘rib energiya oling");
-    return;
+  if (emptyCount >= 2) {
+    spawnTwos(2);
+  } else if (emptyCount === 1) {
+    spawnTwos(1);
   }
 
-  const filled = grid
-    .map((v, i) => v !== 0 ? i : null)
-    .filter(v => v !== null);
-
-  if (filled.length === 0) return;
-
-  const index = filled[Math.floor(Math.random() * filled.length)];
-  grid[index] = 0;
-  energy -= 5;
-
-  spawnTwo();
   render();
 }
 
-/* =======================
-   X2 BUTTON
-======================= */
-function useX2() {
-  if (energy < 10 || selectedIndex === null) {
+/* EMPTY CELL TOOL */
+function useEmptyCell() {
+  if (selectedIndex === null) {
     alert("Avval katak tanlang");
     return;
   }
 
-  grid[selectedIndex] *= 2;
-  energy -= 10;
+  const choices = [2, 4, 8, 16, 32, 64];
+  const newValue = prompt(
+    "Qaysi songa almashtiramiz?\n" + choices.join(", ")
+  );
 
+  const num = Number(newValue);
+  if (!choices.includes(num)) return;
+
+  grid[selectedIndex] = num;
   selectedIndex = null;
   render();
 }
 
-/* =======================
-   DONATE (PLACEHOLDER)
-======================= */
-function donate() {
-  alert("Reklama → Donat (keyin ulanadi)");
+/* X2 */
+function useX2() {
+  if (selectedIndex === null) {
+    alert("Katak tanlang");
+    return;
+  }
+
+  grid[selectedIndex] *= 2;
+  selectedIndex = null;
+  render();
 }
 
-/* =======================
-   RENDER
-======================= */
+/* DONATE */
+function donate() {
+  alert("Reklama 1/3");
+  setTimeout(() => {
+    alert("Reklama 2/3");
+    setTimeout(() => {
+      alert("Reklama 3/3\nRahmat ❤️");
+    }, 800);
+  }, 800);
+}
+
+/* RENDER */
 function render() {
   const board = document.getElementById("board");
   const scoreEl = document.getElementById("score");
@@ -155,20 +140,20 @@ function render() {
 
   board.innerHTML = "";
 
-  grid.forEach((value, i) => {
+  grid.forEach((v, i) => {
     const cell = document.createElement("div");
     cell.className = "cell";
 
-    if (value > 0) {
-      cell.textContent = value;
-      cell.classList.add("v" + value);
+    if (v > 0) {
+      cell.textContent = v;
+      cell.classList.add("v" + v);
     }
 
     if (i === selectedIndex) {
       cell.classList.add("selected");
     }
 
-    cell.addEventListener("click", () => onCellClick(i));
+    cell.onclick = () => onCellClick(i);
     board.appendChild(cell);
   });
 
