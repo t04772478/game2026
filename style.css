@@ -1,198 +1,133 @@
-/* =========================
-   GLOBAL RESET
-========================= */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
-/* =========================
-   BODY + BACKGROUND
-========================= */
 body {
-  min-height: 100vh;
-  background: #000;
-  overflow-x: hidden;
+  margin: 0;
+  height: 100vh;
+  background: #0b1020;
+  overflow: hidden;
 }
 
-/* GTA BACKGROUND */
-body::before {
-  content: "";
+.overlay {
   position: fixed;
   inset: 0;
-  background: url("bg.jpg") center / cover no-repeat;
-  z-index: 0;
+  background: radial-gradient(circle at top, #1b2b6f, #050812);
+  z-index: -1;
 }
 
-/* DARK OVERLAY */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(10, 10, 30, 0.65),
-    rgba(10, 10, 20, 0.85)
-  );
-  z-index: 1;
+.app {
+  width: 320px;
+  margin: 30px auto;
+  padding: 15px;
+  background: rgba(10, 15, 40, 0.85);
+  border-radius: 18px;
+  color: #fff;
 }
 
-/* =========================
-   MAIN CONTAINER
-========================= */
-.game-container {
-  position: relative;
-  z-index: 10;
-  max-width: 420px;
-  margin: 40px auto;
-  padding: 18px;
-  border-radius: 24px;
-  background: rgba(15, 20, 40, 0.85);
-  box-shadow:
-    0 0 40px rgba(80, 120, 255, 0.35),
-    inset 0 0 20px rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-}
-
-/* =========================
-   HEADER
-========================= */
-.title {
-  text-align: center;
-  font-size: 34px;
-  font-weight: 800;
-  color: #7aa2ff;
-  margin-bottom: 8px;
-}
-
-.info {
+.top-bar {
   display: flex;
   justify-content: space-between;
-  color: #fff;
-  font-size: 14px;
-  margin-bottom: 12px;
+  align-items: center;
 }
 
-/* =========================
-   BOARD
-========================= */
-#board {
-  position: relative;
-  z-index: 20;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  padding: 12px;
-  background: rgba(10, 15, 35, 0.9);
-  border-radius: 18px;
+.title {
+  font-size: 22px;
+  font-weight: bold;
 }
 
-/* =========================
-   CELL
-========================= */
-.cell {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 14px;
-  background: rgba(30, 40, 70, 0.9);
+.energy {
   display: flex;
   align-items: center;
-  justify-content: center;
-
-  color: #ffffff;
-  font-size: 28px;
-  font-weight: 800;
-
-  cursor: pointer;
-  user-select: none;
-
-  box-shadow:
-    inset 0 0 12px rgba(255, 255, 255, 0.08),
-    0 6px 14px rgba(0, 0, 0, 0.4);
-
-  transition: all 0.15s ease;
+  gap: 5px;
 }
 
-/* EMPTY */
-.cell:empty {
-  background: rgba(20, 30, 55, 0.6);
-  box-shadow: inset 0 0 10px rgba(255,255,255,0.03);
-}
-
-/* SELECTED */
-.cell.selected {
-  outline: 3px solid #4da3ff;
-  box-shadow:
-    0 0 18px rgba(77, 163, 255, 0.9),
-    inset 0 0 12px rgba(255,255,255,0.15);
-}
-
-/* =========================
-   NUMBER COLORS
-========================= */
-.v2   { background: #3b4a7a; }
-.v4   { background: #445fa0; }
-.v8   { background: #4a7aff; }
-.v16  { background: #5a9cff; }
-.v32  { background: #ff8a3d; }
-.v64  { background: #ff6b2d; }
-.v128 { background: #ff4d4d; }
-.v256 { background: #ff2f6d; }
-.v512 { background: #d92cff; }
-
-/* =========================
-   CONTROLS
-========================= */
-.controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.controls button {
-  flex: 1;
+.energy button {
   border: none;
-  padding: 10px 0;
-  border-radius: 14px;
-  font-weight: 700;
-  color: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
-  background: linear-gradient(135deg, #3a7bfd, #5e9cff);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-.controls button:nth-child(2) {
-  background: linear-gradient(135deg, #4caf50, #7ed957);
+#helpBtn {
+  border: none;
+  background: #444;
+  color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
 }
 
-.controls button:nth-child(3) {
-  background: linear-gradient(135deg, #ff4d6d, #ff7a8a);
+.grid {
+  margin: 15px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 8px;
 }
 
-.controls button:active {
-  transform: scale(0.97);
+.cell {
+  background: #121a3a;
+  border-radius: 10px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #fff;
+  user-select: none;
 }
 
-/* =========================
-   FOOTER TEXT
-========================= */
-.hint {
-  text-align: center;
-  font-size: 12px;
-  color: #cfd8ff;
+.cell.active {
+  background: #2f7cff;
+  box-shadow: 0 0 10px #2f7cff;
+}
+
+.panel {
+  display: flex;
+  justify-content: space-between;
   margin-top: 10px;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 480px) {
-  .game-container {
-    margin: 20px 12px;
-  }
-  .title {
-    font-size: 28px;
-  }
+.btn {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.blue { background: #3498db; }
+.green { background: #2ecc71; }
+.red { background: #e74c3c; }
+
+.hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden { display: none; }
+
+.modal-content {
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
+  width: 280px;
+  text-align: center;
 }
