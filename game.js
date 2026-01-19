@@ -31,11 +31,15 @@ function render() {
   grid.forEach(v => {
     const cell = document.createElement("div");
     cell.className = "cell";
-    cell.textContent = v === 0 ? "" : v;
+    if (v !== 0) {
+      cell.textContent = v;
+      cell.setAttribute("value", v);
+    }
     gridEl.appendChild(cell);
   });
   scoreEl.textContent = score;
 }
+
 
 /* === MERGE LOGIC === */
 function slide(row) {
