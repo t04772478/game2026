@@ -17,6 +17,11 @@ body {
   align-items: center;
   color: #e5e7eb;
 }
+body {
+  background: url("bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
 
 /* APP CARD */
 .app {
