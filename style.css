@@ -132,25 +132,32 @@ body::after {
 /* =========================
    NUMBER COLORS
 ========================= */
-/* Sovuq – aniq ajraladi */
-.v2    { background:#5f9c7e; color:#fff; }
-.v4    { background:#3b63c6; color:#fff; }
-.v8    { background:#2fb7ff; color:#000; }
-.v16   { background:#3dffcc; color:#000; }
+/* === APPLE STYLE – SOFT PASTEL === */
 
-/* Issiq – ko‘zga uriladi */
-.v32   { background:#ffb347; color:#000; }
-.v64   { background:#ff8c42; color:#000; }
-.v128  { background:#ff5c5c; color:#fff; }
-.v256  { background:#ff2f92; color:#fff; }
+/* Past daraja — sokin */
+.v2     { background:#5f9c7e; color:#ffffff; }
+.v4     { background:#6f8fcf; color:#ffffff; }
+.v8     { background:#7fb8c8; color:#102020; }
+.v16    { background:#8fd1b6; color:#102020; }
 
-/* Premium / neon */
-.v512  { background:#b02fff; color:#fff; }
-.v1024 { background:#7a1fff; color:#fff; }
-.v2048 { background:#4b00ff; color:#fff; }
-.v4096 { background:#00e5ff; color:#000; }
-.v8192 { background:#00ff9c; color:#000; }
-.v16384{ background:#ffd700; color:#000; }
+/* O‘rta daraja — iliqroq */
+.v32    { background:#e4d1a3; color:#2a1a00; }
+.v64    { background:#e6b98a; color:#2a1600; }
+.v128   { background:#d9a0a0; color:#ffffff; }
+.v256   { background:#cfa3bd; color:#ffffff; }
+
+/* Yuqori daraja — premium */
+.v512   { background:#b7a3d9; color:#ffffff; }
+.v1024  { background:#a093d9; color:#ffffff; }
+.v2048  { background:#8b84c6; color:#ffffff; }
+.v4096  { background:#7a8fc6; color:#ffffff; }
+
+/* Juda yuqori — ammo ko‘zni og‘ritmaydi */
+.v8192  { background:#7fbfb1; color:#102020; }
+.v16384 { background:#d9cfa3; color:#2a1a00; }
+.v32768 { background:#cfc6b3; color:#2a1a00; }
+.v49152 { background:#bfc4cf; color:#102020; }
+
 
 .tile {
   animation: tileSpawn 0.18s ease-out;
