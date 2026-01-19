@@ -1,162 +1,165 @@
-/***********************
- * 2026 – FINAL LOGIC
- ***********************/
-
-const SIZE = 4;
-const TOTAL = SIZE * SIZE;
-
+/********************
+  GLOBAL STATE
+*********************/
+const GRID_SIZE = 4;
 let grid = [];
 let score = 0;
+
 let energy = 50;
-let selectedIndex = null;
+let maxEnergy = 50;
 
-/* INIT */
-document.addEventListener("DOMContentLoaded", () => {
-  grid = Array(TOTAL).fill(0);
-  startGame();
-});
+let x2Uses = 3;
+let lastEnergyTick = Date.now();
+let lastX2Reset = Date.now();
 
-/* START */
-function startGame() {
-  grid.fill(0);
+/********************
+  INIT
+*********************/
+function initGame() {
+  grid = Array(GRID_SIZE * GRID_SIZE).fill(0);
   score = 0;
-  energy = 50;
-  selectedIndex = null;
-
-  spawnTwos(2);
-  render();
+  spawnInitial();
+  updateUI();
+  startEnergyTimer();
 }
 
-/* SPAWN LOGIC */
-function spawnTwos(count) {
-  const empty = grid
-    .map((v, i) => v === 0 ? i : null)
-    .filter(v => v !== null);
-
-  const spawnCount = Math.min(count, empty.length);
-
-  for (let i = 0; i < spawnCount; i++) {
-    const index = empty.splice(
-      Math.floor(Math.random() * empty.length), 1
-    )[0];
-    grid[index] = 2;
-  }
+/********************
+  SPAWN LOGIC
+*********************/
+function spawnInitial() {
+  spawnNumber(2);
+  spawnNumber(2);
 }
 
-/* CLICK */
-function onCellClick(index) {
+function spawnAfterMerge() {
+  const empty = getEmptyCells();
+  if (empty.length === 0) return;
+
+  spawnNumber(2);
+  if (empty.length > 1) spawnNumber(2);
+}
+
+function spawnNumber(value) {
+  const empty = getEmptyCells();
+  if (!empty.length) return;
+  const index = empty[Math.floor(Math.random() * empty.length)];
+  grid[index] = value;
+}
+
+/********************
+  MERGE LOGIC (CLICK BASED)
+*********************/
+let selectedCell = null;
+
+function selectCell(index) {
   if (grid[index] === 0) return;
 
-  if (selectedIndex === null) {
-    selectedIndex = index;
-    render();
-    return;
-  }
-
-  if (selectedIndex === index) {
-    selectedIndex = null;
-    render();
-    return;
-  }
-
-  tryMerge(selectedIndex, index);
-}
-
-/* MERGE */
-function tryMerge(a, b) {
-  if (grid[a] !== grid[b]) {
-    selectedIndex = null;
-    render();
-    return;
-  }
-
-  const newVal = grid[b] * 2;
-  grid[b] = newVal;
-  grid[a] = 0;
-
-  score += newVal;
-  energy = Math.max(energy - 1, 0);
-  selectedIndex = null;
-
-  const emptyCount = grid.filter(v => v === 0).length;
-
-  if (emptyCount >= 2) {
-    spawnTwos(2);
-  } else if (emptyCount === 1) {
-    spawnTwos(1);
-  }
-
-  render();
-}
-
-/* EMPTY CELL TOOL */
-function useEmptyCell() {
-  if (selectedIndex === null) {
-    alert("Avval katak tanlang");
-    return;
-  }
-
-  const choices = [2, 4, 8, 16, 32, 64];
-  const newValue = prompt(
-    "Qaysi songa almashtiramiz?\n" + choices.join(", ")
-  );
-
-  const num = Number(newValue);
-  if (!choices.includes(num)) return;
-
-  grid[selectedIndex] = num;
-  selectedIndex = null;
-  render();
-}
-
-/* X2 */
-function useX2() {
-  if (selectedIndex === null) {
-    alert("Katak tanlang");
-    return;
-  }
-
-  grid[selectedIndex] *= 2;
-  selectedIndex = null;
-  render();
-}
-
-/* DONATE */
-function donate() {
-  alert("Reklama 1/3");
-  setTimeout(() => {
-    alert("Reklama 2/3");
-    setTimeout(() => {
-      alert("Reklama 3/3\nRahmat ❤️");
-    }, 800);
-  }, 800);
-}
-
-/* RENDER */
-function render() {
-  const board = document.getElementById("board");
-  const scoreEl = document.getElementById("score");
-  const energyEl = document.getElementById("energy");
-
-  board.innerHTML = "";
-
-  grid.forEach((v, i) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-
-    if (v > 0) {
-      cell.textContent = v;
-      cell.classList.add("v" + v);
+  if (selectedCell === null) {
+    selectedCell = index;
+    highlight(index);
+  } else {
+    if (grid[selectedCell] === grid[index]) {
+      grid[index] *= 2;
+      score += grid[index];
+      grid[selectedCell] = 0;
+      selectedCell = null;
+      spawnAfterMerge();
+      energy--;
+    } else {
+      selectedCell = index;
     }
+    updateUI();
+  }
+}
 
-    if (i === selectedIndex) {
-      cell.classList.add("selected");
-    }
+/********************
+  ENERGY SYSTEM
+*********************/
+function startEnergyTimer() {
+  setInterval(() => {
+    if (energy < maxEnergy) energy++;
+    updateUI();
+  }, 30 * 60 * 1000);
+}
 
-    cell.onclick = () => onCellClick(i);
-    board.appendChild(cell);
+function addEnergy(amount) {
+  energy = Math.min(energy + amount, maxEnergy);
+}
+
+/********************
+  SCORE BONUS
+*********************/
+function checkScoreBonus() {
+  const bonus = Math.floor(score / 1000);
+  maxEnergy = 50 + bonus * 10;
+}
+
+/********************
+  BO‘SH JOY (AD)
+*********************/
+function freeCellWithAd(index) {
+  playAd(() => {
+    grid[index] = 0;
+    updateUI();
   });
-
-  scoreEl.textContent = score;
-  energyEl.textContent = energy;
 }
+
+/********************
+  X2 LOGIC
+*********************/
+function useX2(index) {
+  if (x2Uses <= 0) return;
+  grid[index] *= 2;
+  x2Uses--;
+  updateUI();
+}
+
+/********************
+  DONATE
+*********************/
+function donate() {
+  playAd(() => {
+    playAd(() => {
+      playAd(() => {
+        energy += 100;
+        maxEnergy += 100;
+        x2Uses += 1;
+        grid = grid.map(v => v === 16 ? 32 : v);
+        updateUI();
+      });
+    });
+  });
+}
+
+/********************
+  UI HELPERS
+*********************/
+function getEmptyCells() {
+  return grid.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+}
+
+function updateUI() {
+  renderGrid();
+  document.getElementById("score").innerText = score;
+  document.getElementById("energy").innerText = energy;
+}
+
+function renderGrid() {
+  grid.forEach((v, i) => {
+    const cell = document.querySelector(`[data-index="${i}"]`);
+    cell.innerText = v || "";
+    cell.style.fontSize = v ? Math.max(14, 48 - String(v).length * 6) + "px" : "0";
+  });
+}
+
+/********************
+  FAKE AD
+*********************/
+function playAd(cb) {
+  setTimeout(cb, 5000);
+}
+
+/********************
+  START
+*********************/
+initGame();
