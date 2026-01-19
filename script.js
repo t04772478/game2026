@@ -1,165 +1,91 @@
-/************ CONFIG ************/
 const COLS = 4;
 const ROWS = 5;
-const START_ENERGY = 50;
+const gridEl = document.getElementById("grid");
+const energyEl = document.getElementById("energy");
 
-/************ STATE ************/
+let energy = 50;
 let grid = [];
 let selected = null;
-let score = 0;
 
-let energy = START_ENERGY;
-let maxEnergy = START_ENERGY;
-
-let x2Uses = 3;
-let lastX2Reset = Date.now();
-
-/************ DOM ************/
-const board = document.getElementById("board");
-const scoreEl = document.getElementById("score");
-const energyEl = document.getElementById("energy");
-const x2LeftEl = document.getElementById("x2Left");
-
-/************ INIT ************/
-initGame();
-setInterval(energyTick, 60 * 1000);
-
-/************ GAME ************/
-function initGame() {
-  grid = Array(COLS * ROWS).fill(0);
+/* ---------- INIT ---------- */
+function init() {
+  grid = Array(ROWS * COLS).fill(0);
   spawn2();
   spawn2();
   render();
 }
+init();
 
+/* ---------- SPAWN ---------- */
 function spawn2() {
-  const empty = getEmpty();
-  if (!empty.length) return;
-  grid[empty[Math.floor(Math.random() * empty.length)]] = 2;
+  const empty = grid
+    .map((v, i) => v === 0 ? i : null)
+    .filter(v => v !== null);
+
+  if (empty.length === 0) return;
+  const idx = empty[Math.floor(Math.random() * empty.length)];
+  grid[idx] = 2;
 }
 
-function spawnAfterMerge() {
-  const empty = getEmpty().length;
-  if (empty >= 2) spawn2(), spawn2();
-  else if (empty === 1) spawn2();
+/* ---------- RENDER ---------- */
+function render() {
+  gridEl.innerHTML = "";
+  grid.forEach((value, i) => {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    if (value !== 0) {
+      cell.textContent = value;
+      cell.style.fontSize = Math.max(16, 36 - String(value).length * 4) + "px";
+      cell.onclick = () => selectCell(i);
+      if (selected === i) cell.classList.add("active");
+    }
+    gridEl.appendChild(cell);
+  });
+  energyEl.textContent = energy;
 }
 
-function getEmpty() {
-  return grid.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
-}
-
-/************ CLICK ************/
-function clickCell(i) {
-  if (energy <= 0) return;
-
-  if (grid[i] === 0) return;
+/* ---------- SELECT & MERGE ---------- */
+function selectCell(index) {
+  if (grid[index] === 0) return;
 
   if (selected === null) {
-    selected = i;
-  } else if (selected === i) {
-    selected = null;
+    selected = index;
   } else {
-    if (grid[selected] === grid[i]) {
-      grid[i] *= 2;
+    if (selected !== index && grid[selected] === grid[index]) {
+      grid[index] *= 2;
       grid[selected] = 0;
-      score += grid[i];
-      energy--;
-      handleScoreBonus();
-      spawnAfterMerge();
+      selected = null;
+      spawn2();
+    } else {
+      selected = index;
     }
-    selected = null;
   }
   render();
 }
 
-/************ ENERGY ************/
-function energyTick() {
-  if (energy < maxEnergy) energy++;
-  if (Date.now() - lastX2Reset > 24 * 60 * 60 * 1000) {
-    x2Uses = 3;
-    lastX2Reset = Date.now();
-  }
-  render();
-}
+/* ---------- HELP ---------- */
+document.getElementById("helpBtn").onclick = () =>
+  document.getElementById("helpModal").classList.remove("hidden");
 
-function handleScoreBonus() {
-  const level = Math.floor(score / 1000);
-  const newMax = START_ENERGY + level * 10;
-  if (newMax > maxEnergy) {
-    maxEnergy = newMax;
-    energy += 10;
-  }
-}
+document.getElementById("closeHelp").onclick = () =>
+  document.getElementById("helpModal").classList.add("hidden");
 
-/************ BUTTONS ************/
-document.getElementById("energyPlus").onclick = () =>
-  fakeAd(() => { energy += 20; if (energy > maxEnergy) energy = maxEnergy; render(); });
-
-document.getElementById("freeBtn").onclick = () =>
-  fakeAd(() => alert("Bo‘shatmoqchi bo‘lgan katakni bosing")) &&
-  (board.onclick = e => {
-    const i = e.target.dataset.i;
-    if (i !== undefined) {
-      grid[i] = 0;
-      board.onclick = null;
-      render();
-    }
-  });
-
-document.getElementById("x2Btn").onclick = () => {
-  if (x2Uses <= 0 || selected === null) return;
-  grid[selected] *= 2;
-  x2Uses--;
-  selected = null;
+/* ---------- BUTTON STUBS (tayyor joylar) ---------- */
+document.getElementById("energyPlus").onclick = () => {
+  // 👉 bu yerga reklama kodi qo‘yiladi
+  energy += 20;
   render();
 };
 
-document.getElementById("donateBtn").onclick = () =>
-  fakeAd(() => fakeAd(() => fakeAd(() => {
-    energy += 100;
-    maxEnergy += 100;
-    x2Uses++;
-    grid = grid.map(v => v === 16 ? 32 : v);
-    render();
-  })));
+document.getElementById("emptyBtn").onclick = () => {
+  // 👉 reklama evaziga tanlangan katakni bo‘shatish
+};
 
-/************ HELP ************/
-document.getElementById("helpBtn").onclick =
-  () => document.getElementById("helpOverlay").style.display = "block";
+document.getElementById("x2Btn").onclick = () => {
+  // 👉 24 soatda 3 marta x2 logikasi shu yerda
+};
 
-function closeHelp() {
-  document.getElementById("helpOverlay").style.display = "none";
-}
+document.getElementById("donateBtn").onclick = () => {
+  // 👉 3 ta reklama = donat
+};
 
-/************ RENDER ************/
-function render() {
-  board.innerHTML = "";
-  board.style.display = "grid";
-  board.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
-
-  grid.forEach((v, i) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    cell.dataset.i = i;
-
-    if (v > 0) {
-      cell.textContent = v;
-      cell.style.fontSize = Math.max(14, 48 - String(v).length * 6) + "px";
-    }
-
-    if (i === selected) cell.classList.add("selected");
-
-    cell.onclick = () => clickCell(i);
-    board.appendChild(cell);
-  });
-
-  scoreEl.textContent = score;
-  energyEl.textContent = energy;
-  x2LeftEl.textContent = x2Uses;
-}
-
-/************ FAKE AD ************/
-function fakeAd(cb) {
-  setTimeout(cb, 5000);
-  return true;
-}
