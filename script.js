@@ -1,91 +1,93 @@
-const COLS = 4;
-const ROWS = 5;
-const gridEl = document.getElementById("grid");
-const energyEl = document.getElementById("energy");
+// === CONFIG ===
+const ROWS = 4;
+const COLS = 5;
 
-let energy = 50;
-let grid = [];
-let selected = null;
+// === DOM ===
+const grid = document.getElementById("grid");
+const emptyBtn = document.getElementById("emptyBtn");
+const x2Btn = document.getElementById("x2Btn");
+const donateBtn = document.getElementById("donateBtn");
+const helpBtn = document.getElementById("helpBtn");
+const helpModal = document.getElementById("helpModal");
+const closeHelp = document.getElementById("closeHelp");
 
-/* ---------- INIT ---------- */
-function init() {
-  grid = Array(ROWS * COLS).fill(0);
-  spawn2();
-  spawn2();
-  render();
-}
+// === STATE ===
+let board = [];
+let score = 0;
+
+// === INIT ===
 init();
+render();
 
-/* ---------- SPAWN ---------- */
-function spawn2() {
-  const empty = grid
-    .map((v, i) => v === 0 ? i : null)
-    .filter(v => v !== null);
+// === FUNCTIONS ===
+function init() {
+  board = Array.from({ length: ROWS }, () =>
+    Array.from({ length: COLS }, () => 0)
+  );
 
-  if (empty.length === 0) return;
-  const idx = empty[Math.floor(Math.random() * empty.length)];
-  grid[idx] = 2;
+  addTile();
+  addTile();
 }
 
-/* ---------- RENDER ---------- */
-function render() {
-  gridEl.innerHTML = "";
-  grid.forEach((value, i) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    if (value !== 0) {
-      cell.textContent = value;
-      cell.style.fontSize = Math.max(16, 36 - String(value).length * 4) + "px";
-      cell.onclick = () => selectCell(i);
-      if (selected === i) cell.classList.add("active");
-    }
-    gridEl.appendChild(cell);
-  });
-  energyEl.textContent = energy;
-}
-
-/* ---------- SELECT & MERGE ---------- */
-function selectCell(index) {
-  if (grid[index] === 0) return;
-
-  if (selected === null) {
-    selected = index;
-  } else {
-    if (selected !== index && grid[selected] === grid[index]) {
-      grid[index] *= 2;
-      grid[selected] = 0;
-      selected = null;
-      spawn2();
-    } else {
-      selected = index;
+function addTile() {
+  const empty = [];
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (board[r][c] === 0) empty.push({ r, c });
     }
   }
-  render();
+  if (!empty.length) return;
+
+  const { r, c } = empty[Math.floor(Math.random() * empty.length)];
+  board[r][c] = 2;
 }
 
-/* ---------- HELP ---------- */
-document.getElementById("helpBtn").onclick = () =>
-  document.getElementById("helpModal").classList.remove("hidden");
+function render() {
+  grid.innerHTML = "";
+  grid.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
 
-document.getElementById("closeHelp").onclick = () =>
-  document.getElementById("helpModal").classList.add("hidden");
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
 
-/* ---------- BUTTON STUBS (tayyor joylar) ---------- */
-document.getElementById("energyPlus").onclick = () => {
-  // 👉 bu yerga reklama kodi qo‘yiladi
-  energy += 20;
+      if (board[r][c] !== 0) {
+        cell.textContent = board[r][c];
+        cell.classList.add("tile");
+        cell.style.fontSize = Math.max(16, 48 - String(board[r][c]).length * 6) + "px";
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+}
+
+// === BUTTONS ===
+emptyBtn.onclick = () => {
+  addTile();
   render();
 };
 
-document.getElementById("emptyBtn").onclick = () => {
-  // 👉 reklama evaziga tanlangan katakni bo‘shatish
+x2Btn.onclick = () => {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (board[r][c] !== 0) {
+        board[r][c] *= 2;
+        render();
+        return;
+      }
+    }
+  }
 };
 
-document.getElementById("x2Btn").onclick = () => {
-  // 👉 24 soatda 3 marta x2 logikasi shu yerda
+donateBtn.onclick = () => {
+  alert("Donat uchun rahmat ❤️ (keyin reklama ulanadi)");
 };
 
-document.getElementById("donateBtn").onclick = () => {
-  // 👉 3 ta reklama = donat
+helpBtn.onclick = () => {
+  helpModal.classList.remove("hidden");
 };
 
+closeHelp.onclick = () => {
+  helpModal.classList.add("hidden");
+};
