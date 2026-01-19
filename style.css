@@ -6,48 +6,45 @@
 body {
   margin: 0;
   height: 100vh;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
-  background: linear-gradient(135deg, #f6f8ff, #eef2ff);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
+  background: radial-gradient(circle at top, #111827, #020617);
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #e5e7eb;
 }
 
-/* === APP CARD === */
+/* APP */
 .app {
   width: 360px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(24px);
   border-radius: 28px;
   padding: 18px;
-  box-shadow:
-    0 20px 40px rgba(0,0,0,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.6);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.7);
 }
 
-/* === HEADER === */
+/* HEADER */
 header {
   text-align: center;
-  margin-bottom: 12px;
 }
 
 h1 {
   margin: 0;
-  font-size: 30px;
-  font-weight: 700;
-  color: #1f2937;
+  font-size: 32px;
+  letter-spacing: 1px;
 }
 
 .score {
   margin-top: 6px;
-  font-size: 15px;
-  color: #6b7280;
+  font-size: 14px;
+  color: #9ca3af;
 }
 
-/* === GRID === */
+/* GRID */
 .grid {
-  margin: 16px 0;
-  background: rgba(240, 243, 255, 0.9);
+  margin: 18px 0;
+  background: rgba(30, 41, 59, 0.9);
   border-radius: 20px;
   padding: 12px;
   display: grid;
@@ -55,41 +52,41 @@ h1 {
   gap: 12px;
 }
 
-/* === CELL === */
+/* CELL */
 .cell {
   height: 72px;
   border-radius: 16px;
-  background: linear-gradient(145deg, #ffffff, #e6ebff);
+  background: linear-gradient(145deg, #0f172a, #020617);
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: 800;
   font-size: 22px;
-  font-weight: 700;
-  color: #1f2937;
+  color: #e5e7eb;
   box-shadow:
-    0 6px 12px rgba(0,0,0,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.8);
-  transition: transform 0.12s ease, background 0.2s;
+    0 8px 20px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: transform 0.12s ease;
 }
 
 .cell:not(:empty) {
   animation: pop 0.15s ease;
 }
 
-/* === TILE COLORS === */
-.cell[value="2"]    { background: #eef2ff; }
-.cell[value="4"]    { background: #e0e7ff; }
-.cell[value="8"]    { background: #c7d2fe; color:#1e3a8a; }
-.cell[value="16"]   { background: #a5b4fc; color:#1e3a8a; }
-.cell[value="32"]   { background: #818cf8; color:#fff; }
-.cell[value="64"]   { background: #6366f1; color:#fff; }
-.cell[value="128"]  { background: #4f46e5; color:#fff; }
-.cell[value="256"]  { background: #4338ca; color:#fff; }
-.cell[value="512"]  { background: #3730a3; color:#fff; }
-.cell[value="1024"] { background: #312e81; color:#fff; }
-.cell[value="2048"] { background: #1e1b4b; color:#fff; }
+/* TILE COLORS */
+.cell[v="2"]    { background:#1e293b; }
+.cell[v="4"]    { background:#1e3a8a; }
+.cell[v="8"]    { background:#2563eb; }
+.cell[v="16"]   { background:#4f46e5; }
+.cell[v="32"]   { background:#7c3aed; }
+.cell[v="64"]   { background:#9333ea; }
+.cell[v="128"]  { background:#c026d3; }
+.cell[v="256"]  { background:#db2777; }
+.cell[v="512"]  { background:#e11d48; }
+.cell[v="1024"] { background:#f43f5e; }
+.cell[v="2048"] { background:#fb7185; }
 
-/* === MENU === */
+/* MENU */
 .menu {
   display: flex;
   gap: 10px;
@@ -100,22 +97,21 @@ h1 {
   padding: 12px 10px;
   border: none;
   border-radius: 16px;
-  background: linear-gradient(145deg, #f1f5ff, #e0e7ff);
-  font-size: 13px;
+  background: linear-gradient(145deg, #111827, #020617);
+  color: #e5e7eb;
+  font-size: 12px;
   font-weight: 600;
-  color: #1f2937;
   cursor: pointer;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.6);
 }
 
 .menu button:active {
   transform: scale(0.96);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.12);
 }
 
-/* === ANIMATION === */
+/* ANIM */
 @keyframes pop {
-  0%   { transform: scale(0.8); }
-  100% { transform: scale(1); }
+  from { transform: scale(0.8); }
+  to   { transform: scale(1); }
 }
+
