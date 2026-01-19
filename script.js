@@ -1,63 +1,162 @@
-const ROWS = 4;
-const COLS = 4;
-const grid = document.getElementById("grid");
+/***********************
+ * 2026 – FINAL LOGIC
+ ***********************/
 
-let board = [];
+const SIZE = 4;
+const TOTAL = SIZE * SIZE;
 
-function init() {
-  board = Array.from({ length: ROWS }, () =>
-    Array.from({ length: COLS }, () => 0)
-  );
-  addRandom();
-  addRandom();
-  render();
-}
+let grid = [];
+let score = 0;
+let energy = 50;
+let selectedIndex = null;
 
-function addRandom() {
-  const empty = [];
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      if (board[r][c] === 0) empty.push([r, c]);
-    }
-  }
-  if (!empty.length) return;
-  const [r, c] = empty[Math.floor(Math.random() * empty.length)];
-  board[r][c] = 2;
-}
-
-function render() {
-  grid.innerHTML = "";
-  grid.style.display = "grid";
-  grid.style.gridTemplateColumns = `repeat(${COLS}, 80px)`;
-  grid.style.gap = "10px";
-
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const cell = document.createElement("div");
-      cell.style.width = "80px";
-      cell.style.height = "80px";
-      cell.style.borderRadius = "12px";
-      cell.style.background = board[r][c] ? "#4da6ff" : "#1c1c2b";
-      cell.style.display = "flex";
-      cell.style.alignItems = "center";
-      cell.style.justifyContent = "center";
-      cell.style.fontSize = "28px";
-      cell.style.color = "#fff";
-      if (board[r][c]) cell.textContent = board[r][c];
-      grid.appendChild(cell);
-    }
-  }
-}
-
-document.addEventListener("keydown", e => {
-  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-    move();
-  }
+/* INIT */
+document.addEventListener("DOMContentLoaded", () => {
+  grid = Array(TOTAL).fill(0);
+  startGame();
 });
 
-function move() {
-  addRandom();
+/* START */
+function startGame() {
+  grid.fill(0);
+  score = 0;
+  energy = 50;
+  selectedIndex = null;
+
+  spawnTwos(2);
   render();
 }
 
-init();
+/* SPAWN LOGIC */
+function spawnTwos(count) {
+  const empty = grid
+    .map((v, i) => v === 0 ? i : null)
+    .filter(v => v !== null);
+
+  const spawnCount = Math.min(count, empty.length);
+
+  for (let i = 0; i < spawnCount; i++) {
+    const index = empty.splice(
+      Math.floor(Math.random() * empty.length), 1
+    )[0];
+    grid[index] = 2;
+  }
+}
+
+/* CLICK */
+function onCellClick(index) {
+  if (grid[index] === 0) return;
+
+  if (selectedIndex === null) {
+    selectedIndex = index;
+    render();
+    return;
+  }
+
+  if (selectedIndex === index) {
+    selectedIndex = null;
+    render();
+    return;
+  }
+
+  tryMerge(selectedIndex, index);
+}
+
+/* MERGE */
+function tryMerge(a, b) {
+  if (grid[a] !== grid[b]) {
+    selectedIndex = null;
+    render();
+    return;
+  }
+
+  const newVal = grid[b] * 2;
+  grid[b] = newVal;
+  grid[a] = 0;
+
+  score += newVal;
+  energy = Math.max(energy - 1, 0);
+  selectedIndex = null;
+
+  const emptyCount = grid.filter(v => v === 0).length;
+
+  if (emptyCount >= 2) {
+    spawnTwos(2);
+  } else if (emptyCount === 1) {
+    spawnTwos(1);
+  }
+
+  render();
+}
+
+/* EMPTY CELL TOOL */
+function useEmptyCell() {
+  if (selectedIndex === null) {
+    alert("Avval katak tanlang");
+    return;
+  }
+
+  const choices = [2, 4, 8, 16, 32, 64];
+  const newValue = prompt(
+    "Qaysi songa almashtiramiz?\n" + choices.join(", ")
+  );
+
+  const num = Number(newValue);
+  if (!choices.includes(num)) return;
+
+  grid[selectedIndex] = num;
+  selectedIndex = null;
+  render();
+}
+
+/* X2 */
+function useX2() {
+  if (selectedIndex === null) {
+    alert("Katak tanlang");
+    return;
+  }
+
+  grid[selectedIndex] *= 2;
+  selectedIndex = null;
+  render();
+}
+
+/* DONATE */
+function donate() {
+  alert("Reklama 1/3");
+  setTimeout(() => {
+    alert("Reklama 2/3");
+    setTimeout(() => {
+      alert("Reklama 3/3\nRahmat ❤️");
+    }, 800);
+  }, 800);
+}
+
+/* RENDER */
+function render() {
+  const board = document.getElementById("board");
+  const scoreEl = document.getElementById("score");
+  const energyEl = document.getElementById("energy");
+
+  board.innerHTML = "";
+
+  grid.forEach((v, i) => {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+
+    if (v > 0) {
+      cell.textContent = v;
+      cell.classList.add("v" + v);
+    }
+
+    if (i === selectedIndex) {
+      cell.classList.add("selected");
+    }
+
+    cell.onclick = () => onCellClick(i);
+    board.appendChild(cell);
+  });
+
+  scoreEl.textContent = score;
+  energyEl.textContent = energy;
+}
