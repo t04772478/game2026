@@ -1,142 +1,207 @@
-// DOM
-const gridEl = document.getElementById("grid");
-const scoreEl = document.getElementById("score");
-const energyEl = document.getElementById("energy");
-const clearBtn = document.getElementById("clear");
-const boostBtn = document.getElementById("boost");
-const donateBtn = document.getElementById("donate");
+/* =========================
+   2026 – SMART MERGE
+   Author: Sen + ChatGPT
+   ========================= */
 
-// State
+/* --------- SOZLAMALAR --------- */
+const SIZE = 4;
+const MAX_ENERGY = 50;
+const ENERGY_REWARD = 20;
+
+/* --------- HOLAT --------- */
 let grid = Array(16).fill(0);
 let score = 0;
-let energy = 50;
-let selected = null;
-let clearMode = false;
+let energy = MAX_ENERGY;
 
-// INIT
+let selectedIndex = null;
+
+/* --------- DOM --------- */
+const board = document.getElementById("board");
+const scoreEl = document.getElementById("score");
+const energyEl = document.getElementById("energy");
+
+/* --------- BOSHLASH --------- */
+init();
+
+/* =========================
+   ASOSIY FUNKSIYALAR
+   ========================= */
+
 function init() {
   grid.fill(0);
   score = 0;
-  energy = 50;
-  spawnNormal();
-  spawnNormal();
+  energy = MAX_ENERGY;
+  selectedIndex = null;
+
+  spawnTwo();
+  spawnTwo();
   render();
 }
 
-// NORMAL SPAWN (2 or 4)
-function spawnNormal() {
-  const empty = grid
-    .map((v, i) => (v === 0 ? i : null))
-    .filter(v => v !== null);
-
-  if (!empty.length) return;
-
-  const pos = empty[Math.floor(Math.random() * empty.length)];
-  grid[pos] = Math.random() < 0.7 ? 2 : 4;
-}
-
-// MERGE SPAWN (ONLY 2)
-function spawnAfterMerge() {
-  const empty = grid
-    .map((v, i) => (v === 0 ? i : null))
-    .filter(v => v !== null);
-
-  if (!empty.length) return;
-
-  const pos = empty[Math.floor(Math.random() * empty.length)];
-  grid[pos] = 2;
-}
-
-// RENDER
+/* --------- RENDER --------- */
 function render() {
-  gridEl.innerHTML = "";
-  grid.forEach((v, i) => {
+  board.innerHTML = "";
+
+  grid.forEach((value, index) => {
     const cell = document.createElement("div");
     cell.className = "cell";
 
-    if (v) {
-      cell.textContent = v;
-      cell.setAttribute("v", v);
-      cell.onclick = () => onCellClick(i);
+    if (value !== 0) {
+      cell.textContent = value;
+      cell.classList.add("v" + value);
     }
 
-    if (i === selected) cell.classList.add("active");
-    gridEl.appendChild(cell);
+    if (index === selectedIndex) {
+      cell.classList.add("selected");
+    }
+
+    cell.onclick = () => onCellClick(index);
+    board.appendChild(cell);
   });
 
   scoreEl.textContent = score;
   energyEl.textContent = energy;
 }
 
-// CELL CLICK
-function onCellClick(i) {
-  if (clearMode) {
-    grid[i] = 0;
-    clearMode = false;
-    spawnNormal();
+/* =========================
+   O‘YIN MANTIQI
+   ========================= */
+
+function onCellClick(index) {
+  if (grid[index] === 0) return;
+
+  if (selectedIndex === null) {
+    selectedIndex = index;
     render();
     return;
   }
 
-  if (energy <= 0) {
-    watchAd(5, () => {
-      energy += 20;
+  if (selectedIndex === index) {
+    selectedIndex = null;
+    render();
+    return;
+  }
+
+  tryMerge(selectedIndex, index);
+  selectedIndex = null;
+  render();
+}
+
+/* --------- BIRLASHTIRISH --------- */
+function tryMerge(from, to) {
+  if (energy <= 0) return;
+
+  if (grid[from] === grid[to]) {
+    grid[to] *= 2;
+    grid[from] = 0;
+
+    score += grid[to];
+    energy--;
+
+    spawnTwo();
+    ensurePlayable();
+  }
+}
+
+/* =========================
+   AVTO YORDAM
+   ========================= */
+
+/* Har doim bo‘sh joyga 2 chiqadi */
+function spawnTwo() {
+  const empty = grid
+    .map((v, i) => (v === 0 ? i : null))
+    .filter(v => v !== null);
+
+  if (empty.length === 0) return;
+
+  const index = empty[Math.floor(Math.random() * empty.length)];
+  grid[index] = 2;
+}
+
+/* Agar merge bo‘lmasa — yana 2 qo‘shiladi */
+function ensurePlayable() {
+  if (!hasMerge()) {
+    spawnTwo();
+  }
+}
+
+/* Maydonda merge bormi */
+function hasMerge() {
+  const counts = {};
+  grid.forEach(v => {
+    if (v > 0) counts[v] = (counts[v] || 0) + 1;
+  });
+
+  return Object.values(counts).some(c => c >= 2);
+}
+
+/* =========================
+   MENU TUGMALARI
+   ========================= */
+
+/* Bo‘sh joy ochish */
+window.freeCell = function () {
+  if (energy < 5) {
+    watchAd(() => {
+      energy += ENERGY_REWARD;
       render();
     });
     return;
   }
 
-  if (selected === null) {
-    selected = i;
-  } else {
-    if (grid[selected] === grid[i] && selected !== i) {
-      grid[i] *= 2;
-      score += grid[i];
-      grid[selected] = 0;
-      energy--;
-      spawnAfterMerge(); // ❗ faqat 2
-    }
-    selected = null;
-  }
+  const filled = grid
+    .map((v, i) => (v !== 0 ? i : null))
+    .filter(v => v !== null);
+
+  if (filled.length === 0) return;
+
+  const index = filled[Math.floor(Math.random() * filled.length)];
+  grid[index] = 0;
+  energy -= 5;
+  spawnTwo();
   render();
-}
-
-// FAKE AD
-function watchAd(seconds, cb) {
-  alert(`Reklama: ${seconds} soniya`);
-  setTimeout(cb, seconds * 1000);
-}
-
-// CLEAR BUTTON (only if full)
-clearBtn.onclick = () => {
-  if (grid.includes(0)) return;
-  watchAd(5, () => {
-    clearMode = true;
-    alert("Bo‘shatmoqchi bo‘lgan katakni tanlang");
-  });
 };
 
-// BOOST BUTTON (2 ads)
-boostBtn.onclick = () => {
-  if (selected === null) return;
-  watchAd(5, () => {
-    watchAd(5, () => {
-      grid[selected] *= 2;
-      score += grid[selected];
-      spawnAfterMerge();
-      selected = null;
+/* X2 qilish */
+window.doubleTile = function () {
+  if (energy < 10) {
+    watchAd(() => {
+      energy += ENERGY_REWARD;
       render();
     });
-  });
+    return;
+  }
+
+  if (selectedIndex === null) return;
+
+  grid[selectedIndex] *= 2;
+  score += grid[selectedIndex];
+  energy -= 10;
+
+  spawnTwo();
+  ensurePlayable();
+  render();
 };
 
-// DONATE
-donateBtn.onclick = () => {
-  watchAd(12, () => {
+/* Donat */
+window.donate = function () {
+  watchLongAd(() => {
     energy += 50;
     render();
   });
 };
 
-// START
-init();
+/* =========================
+   REKLAMA (SIMULYATSIYA)
+   ========================= */
+
+function watchAd(callback) {
+  alert("5 soniyalik reklama...");
+  setTimeout(callback, 5000);
+}
+
+function watchLongAd(callback) {
+  alert("Uzun reklama / donat...");
+  setTimeout(callback, 8000);
+}
