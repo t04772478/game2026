@@ -134,6 +134,32 @@ window.addEventListener("keydown",e=>{
   if(e.key==="ArrowDown") move("d");
 });
 start();
+  <script>
+let startX = 0;
+let startY = 0;
+
+document.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+});
+
+document.addEventListener("touchend", e => {
+  let endX = e.changedTouches[0].clientX;
+  let endY = e.changedTouches[0].clientY;
+
+  let diffX = endX - startX;
+  let diffY = endY - startY;
+
+  if (Math.abs(diffX) > Math.abs(diffY)) {
+    if (diffX > 30) move("r");
+    if (diffX < -30) move("l");
+  } else {
+    if (diffY > 30) move("d");
+    if (diffY < -30) move("u");
+  }
+});
+</script>
+
 </script>
 </body>
 </html>
