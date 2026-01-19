@@ -5,37 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2026</title>
 
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="game-container">
-    <div class="title">2026</div>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="score">
+        Score: <span id="score">0</span>
+      </div>
 
-    <div class="info">
-      <div>Score: <span id="score">0</span></div>
-      <div>⚡ <span id="energy">50</span></div>
+      <div class="energy">
+        ⚡ <span id="energy">50</span>
+        <button id="energyPlus" title="Reklama orqali energiya">+</button>
+      </div>
+
+      <button id="helpBtn" title="Qo‘llanma">?</button>
     </div>
 
-    <!-- BOARD -->
+    <!-- GAME BOARD -->
     <div id="board"></div>
 
     <!-- CONTROLS -->
     <div class="controls">
-      <button onclick="useEmptyCell()">Bo‘sh joy</button>
-      <button onclick="useX2()">x2</button>
-      <button onclick="donate()">❤️ Donat</button>
+      <button id="freeBtn">Bo‘sh joy</button>
+      <button id="x2Btn">x2</button>
+      <button id="donateBtn">❤️</button>
     </div>
 
     <div class="hint">
-      Bir xil sonni bos → yana bir xilini bos → birlashadi
+      Bir xil sonni bos → yana bir xilini bos → birlashtir
     </div>
   </div>
 
-  <script src="script.js"></script>
-</body>
-</html>
+  <!-- HELP OVERLAY -->
+  <div id="helpOverlay" style="display:none">
+    <div class="help-content">
+      <h3>O‘yin qo‘llanmasi</h3>
+      <p>• Bir xil sonlarni birlashtiring</p>
+      <p>• Energiya 30 daqiqada to‘ldiriladi</p>
+      <p>• + tugmasi reklama evaziga energiya beradi</p>
+      <p>• x2 cheklangan, donat bilan oshadi</p>
+      <button onclick="closeHelp()">Yopish</button>
+    </div>
+  </div>
 
-<script src="script.js"></script>
+  <!-- JS -->
+  <script src="script.js"></script>
 </body>
 </html>
