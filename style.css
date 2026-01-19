@@ -4,7 +4,7 @@ body{
   margin:0;
   height:100vh;
   font-family:system-ui,-apple-system;
-  background:#0e1621;
+  background:#0b1220;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -13,16 +13,16 @@ body{
 
 .app{
   width:360px;
-  background:#17212b;
-  border-radius:20px;
+  background:#111827;
+  border-radius:22px;
   padding:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  box-shadow:0 15px 40px rgba(0,0,0,.6);
 }
 
 header{text-align:center}
 h1{margin:0;font-size:28px}
 
-.top{
+.stats{
   margin-top:6px;
   display:flex;
   justify-content:space-between;
@@ -32,9 +32,9 @@ h1{margin:0;font-size:28px}
 
 .grid{
   margin:14px 0;
-  background:#1f2a38;
-  border-radius:16px;
-  padding:10px;
+  background:#0f172a;
+  border-radius:18px;
+  padding:12px;
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:10px;
@@ -42,41 +42,52 @@ h1{margin:0;font-size:28px}
 
 .cell{
   height:70px;
-  border-radius:12px;
-  background:#111827;
+  border-radius:14px;
+  background:#020617;
   display:flex;
   justify-content:center;
   align-items:center;
   font-weight:700;
   font-size:22px;
   cursor:pointer;
+  transition:.15s;
 }
 
-.cell.active{outline:3px solid #38bdf8}
+.cell.active{
+  outline:3px solid #38bdf8;
+  transform:scale(1.05);
+}
 
-.cell[v="2"]{background:#22303c}
-.cell[v="4"]{background:#2a3b4d}
-.cell[v="8"]{background:#34516c}
-.cell[v="16"]{background:#3b82f6}
-.cell[v="32"]{background:#6366f1}
-.cell[v="64"]{background:#8b5cf6}
-.cell[v="128"]{background:#a855f7}
-.cell[v="256"]{background:#d946ef}
-.cell[v="512"]{background:#ec4899}
-.cell[v="1024"]{background:#f43f5e}
+.cell[v="2"]{background:#1e293b}
+.cell[v="4"]{background:#334155}
+.cell[v="8"]{background:#1d4ed8}
+.cell[v="16"]{background:#2563eb}
+.cell[v="32"]{background:#4f46e5}
+.cell[v="64"]{background:#7c3aed}
+.cell[v="128"]{background:#9333ea}
+.cell[v="256"]{background:#c026d3}
+.cell[v="512"]{background:#db2777}
+.cell[v="1024"]{background:#e11d48}
 
 .menu{
   display:flex;
   gap:8px;
+  margin-bottom:8px;
 }
 
 .menu button{
   flex:1;
   padding:10px;
   border:none;
-  border-radius:12px;
-  background:#22303c;
+  border-radius:14px;
+  background:#1e293b;
   color:#e5e7eb;
   font-size:13px;
   cursor:pointer;
+}
+
+.hint{
+  text-align:center;
+  font-size:12px;
+  color:#94a3b8;
 }
