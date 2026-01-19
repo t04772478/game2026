@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026 — Smart Merge</title>
+  <title>2026</title>
   <link rel="stylesheet" href="style.css">
 </head>
+<body>
 
-<body class="dark">
 <div class="app">
-
   <header>
     <h1>2026</h1>
-    <div class="stats">
+    <div class="top">
       <span>Score: <b id="score">0</b></span>
       <span>⚡ <b id="energy">20</b></span>
     </div>
@@ -20,12 +19,11 @@
 
   <div id="grid" class="grid"></div>
 
-  <footer>
-    <div class="hint">
-      Bir xil sonni bos → yana bir xilini bos → birlashadi
-    </div>
-  </footer>
-
+  <div class="menu">
+    <button id="clear">🟦 Bo‘sh katak</button>
+    <button id="boost">🟩 ×2 qilish</button>
+    <button id="donate">❤️ Donat</button>
+  </div>
 </div>
 
 <script src="game.js"></script>
