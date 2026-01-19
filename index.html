@@ -1,34 +1,30 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>2026</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
+
+<body class="dark">
 
 <div class="app">
-
   <header>
     <h1>2026</h1>
-    <div class="score">
-      Score: <span id="score">0</span>
-    </div>
+    <div class="score">Score: <span id="score">0</span></div>
   </header>
 
-  <main>
-    <div id="grid" class="grid"></div>
-  </main>
+  <section id="grid" class="grid"></section>
 
   <footer class="menu">
-    <button id="open-cell">🟦 Katak ochish</button>
-    <button id="double-cell">🟩 ×2 qilish</button>
+    <button id="boost-empty">➕ Bo‘sh katak</button>
+    <button id="boost-double">×2 Kuchaytirish</button>
     <button id="donate">❤️ Donat</button>
   </footer>
-
 </div>
 
 <script src="game.js"></script>
 </body>
 </html>
+
