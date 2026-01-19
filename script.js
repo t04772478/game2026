@@ -9,11 +9,20 @@ let grid = [];
 let score = 0;
 let energy = 50;
 let selectedIndex = null;
+let gameOver = false;
+
+/* x2 limit */
+let x2Used = JSON.parse(localStorage.getItem("x2Used")) || 0;
+let x2ResetTime = JSON.parse(localStorage.getItem("x2Reset")) || Date.now();
+
+/* replace mode */
+let replaceMode = false;
 
 /* INIT */
 document.addEventListener("DOMContentLoaded", () => {
   grid = Array(TOTAL).fill(0);
   startGame();
+  setInterval(autoEnergyRefill, 30 * 60 * 1000);
 });
 
 /* START */
@@ -22,12 +31,13 @@ function startGame() {
   score = 0;
   energy = 50;
   selectedIndex = null;
+  gameOver = false;
 
   spawnTwos(2);
   render();
 }
 
-/* SPAWN LOGIC */
+/* SPAWN */
 function spawnTwos(count) {
   const empty = grid
     .map((v, i) => v === 0 ? i : null)
@@ -43,8 +53,16 @@ function spawnTwos(count) {
   }
 }
 
-/* CLICK */
+/* CELL CLICK */
 function onCellClick(index) {
+  if (gameOver) return;
+
+  /* REPLACE MODE */
+  if (replaceMode) {
+    showReplaceOptions(index);
+    return;
+  }
+
   if (grid[index] === 0) return;
 
   if (selectedIndex === null) {
@@ -70,66 +88,111 @@ function tryMerge(a, b) {
     return;
   }
 
-  const newVal = grid[b] * 2;
-  grid[b] = newVal;
+  grid[b] *= 2;
   grid[a] = 0;
 
-  score += newVal;
-  energy = Math.max(energy - 1, 0);
+  score += grid[b];
+  energy--;
+
+  if (energy <= 0) {
+    energy = 0;
+    gameOver = true;
+    alert("Energiya tugadi ⚡\n30 daqiqa kuting yoki + bosing");
+  }
+
   selectedIndex = null;
 
   const emptyCount = grid.filter(v => v === 0).length;
-
-  if (emptyCount >= 2) {
-    spawnTwos(2);
-  } else if (emptyCount === 1) {
-    spawnTwos(1);
-  }
+  if (emptyCount >= 2) spawnTwos(2);
+  else if (emptyCount === 1) spawnTwos(1);
 
   render();
 }
 
-/* EMPTY CELL TOOL */
-function useEmptyCell() {
-  if (selectedIndex === null) {
-    alert("Avval katak tanlang");
+/* 🔄 REPLACE */
+function useReplace() {
+  fakeAd(() => {
+    replaceMode = true;
+    alert("Katakni tanlang");
+  });
+}
+
+function showReplaceOptions(index) {
+  const choices = [2, 4, 8, 16, 32, 64];
+  const pick = prompt("Son tanlang:\n" + choices.join(", "));
+  const num = Number(pick);
+
+  if (choices.includes(num)) {
+    grid[index] = num;
+  }
+
+  replaceMode = false;
+  render();
+}
+
+/* ✖️ X2 */
+function useX2() {
+  resetX2IfNeeded();
+
+  if (x2Used >= 3) {
+    alert("x2 limiti tugadi (24 soat)");
     return;
   }
 
-  const choices = [2, 4, 8, 16, 32, 64];
-  const newValue = prompt(
-    "Qaysi songa almashtiramiz?\n" + choices.join(", ")
-  );
-
-  const num = Number(newValue);
-  if (!choices.includes(num)) return;
-
-  grid[selectedIndex] = num;
-  selectedIndex = null;
-  render();
-}
-
-/* X2 */
-function useX2() {
   if (selectedIndex === null) {
     alert("Katak tanlang");
     return;
   }
 
-  grid[selectedIndex] *= 2;
-  selectedIndex = null;
+  fakeAd(() => {
+    grid[selectedIndex] *= 2;
+    x2Used++;
+    localStorage.setItem("x2Used", JSON.stringify(x2Used));
+    localStorage.setItem("x2Reset", JSON.stringify(x2ResetTime));
+    selectedIndex = null;
+    render();
+  });
+}
+
+function resetX2IfNeeded() {
+  if (Date.now() - x2ResetTime > 24 * 60 * 60 * 1000) {
+    x2Used = 0;
+    x2ResetTime = Date.now();
+  }
+}
+
+/* ❤️ DONATE */
+function donate() {
+  fakeAd(() => {
+    fakeAd(() => {
+      fakeAd(() => {
+        energy += 100;
+        x2Used = Math.max(x2Used - 1, 0);
+        alert("Rahmat ❤️\n+100 energiya\n+1 x2");
+        render();
+      });
+    });
+  });
+}
+
+/* ⚡ ENERGY + */
+function addEnergyByAd() {
+  fakeAd(() => {
+    energy += 20;
+    gameOver = false;
+    render();
+  });
+}
+
+function autoEnergyRefill() {
+  energy += 50;
+  gameOver = false;
   render();
 }
 
-/* DONATE */
-function donate() {
-  alert("Reklama 1/3");
-  setTimeout(() => {
-    alert("Reklama 2/3");
-    setTimeout(() => {
-      alert("Reklama 3/3\nRahmat ❤️");
-    }, 800);
-  }, 800);
+/* FAKE AD */
+function fakeAd(cb) {
+  setTimeout(cb, 1200);
 }
 
 /* RENDER */
@@ -149,9 +212,7 @@ function render() {
       cell.classList.add("v" + v);
     }
 
-    if (i === selectedIndex) {
-      cell.classList.add("selected");
-    }
+    if (i === selectedIndex) cell.classList.add("selected");
 
     cell.onclick = () => onCellClick(i);
     board.appendChild(cell);
