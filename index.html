@@ -4,31 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2026</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
-  <header>
-    <h1>2026</h1>
-    <div class="stats">
-      <span>Score: <b id="score">0</b></span>
-      <span>⚡ <b id="energy">20</b></span>
+  <div class="game-container">
+    <div class="title">2026</div>
+
+    <div class="info">
+      <div>Score: <span id="score">0</span></div>
+      <div>⚡ <span id="energy">50</span></div>
     </div>
-  </header>
 
-  <div id="grid" class="grid"></div>
+    <!-- BOARD -->
+    <div id="board"></div>
 
-  <div class="menu">
-    <button id="clear">🟦 Bo‘sh joy</button>
-    <button id="boost">🟩 ×2</button>
-    <button id="donate">❤️ Donat</button>
+    <!-- CONTROLS -->
+    <div class="controls">
+      <button onclick="useEmptyCell()">Bo‘sh joy</button>
+      <button onclick="useX2()">x2</button>
+      <button onclick="donate()">❤️ Donat</button>
+    </div>
+
+    <div class="hint">
+      Bir xil sonni bos → yana bir xilini bos → birlashadi
+    </div>
   </div>
 
-  <div class="hint">
-    Bir xil sonni bos → yana bir xilini bos → birlashadi
-  </div>
-</div>
+  <script src="script.js"></script>
+</body>
+</html>
 
 <script src="script.js"></script>
 </body>
