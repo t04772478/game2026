@@ -2,50 +2,36 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <title>2026</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="overlay"></div>
-
-<div class="app">
-  <div class="top-bar">
+  <div class="game-container">
     <div class="title">2026</div>
-    <div class="energy">
-      ⚡ <span id="energy">50</span>
-      <button id="energyPlus">+</button>
+
+    <div class="info">
+      <div>Score: <span id="score">0</span></div>
+      <div>⚡ <span id="energy">50</span></div>
     </div>
-    <button id="helpBtn">?</button>
+
+    <!-- BOARD -->
+    <div id="board"></div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <button onclick="useEmptyCell()">Bo‘sh joy</button>
+      <button onclick="useX2()">x2</button>
+      <button onclick="donate()">❤️ Donat</button>
+    </div>
+
+    <div class="hint">
+      Bir xil sonni bos → yana bir xilini bos → birlashadi
+    </div>
   </div>
 
-  <div id="grid" class="grid"></div>
-
-  <div class="panel">
-    <button id="emptyBtn" class="btn blue">Bo‘sh joy</button>
-    <button id="x2Btn" class="btn green">x2</button>
-    <button id="donateBtn" class="btn red">❤️ Donat</button>
-  </div>
-
-  <div class="hint">
-    Bir xil sonni bos → yana bir xilini bos → birlashadi
-  </div>
-</div>
-
-<div id="helpModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>O‘yin qo‘llanmasi</h2>
-    <p>
-      • Bir xil sonlarni ketma-ket bosing — ular birlashadi<br>
-      • Har yurishda bo‘sh joyga yangi <b>2</b> chiqadi<br>
-      • Energiya har 30 daqiqada to‘ladi<br>
-      • x2 va Bo‘sh joy bonuslar orqali ishlaydi
-    </p>
-    <button id="closeHelp">Yopish</button>
-  </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
