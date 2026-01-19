@@ -12,21 +12,25 @@ function init(){
   grid.fill(0);
   score = 0;
   energy = 20;
-  add(2);
+  spawn(2);
   render();
 }
 
-/* ADD NUMBERS (NEVER STUCK) */
-function add(n){
-  for(let i=0;i<n;i++){
+/* ALWAYS SPAWN 2 OR 4 */
+function spawn(count){
+  for(let i=0;i<count;i++){
     let empty = grid.map((v,i)=>v===0?i:null).filter(v=>v!==null);
+
+    // agar bo‘sh joy yo‘q bo‘lsa – eng kichik sonni o‘chiramiz
     if(!empty.length){
-      // majburan bo‘shatamiz
-      grid[Math.floor(Math.random()*16)] = 0;
-      empty = grid.map((v,i)=>v===0?i:null).filter(v=>v!==null);
+      let min = Math.min(...grid.filter(v=>v>0));
+      let idx = grid.indexOf(min);
+      grid[idx] = 0;
+      empty = [idx];
     }
-    const idx = empty[Math.floor(Math.random()*empty.length)];
-    grid[idx] = Math.random()<0.75?2:4;
+
+    const pos = empty[Math.floor(Math.random()*empty.length)];
+    grid[pos] = Math.random()<0.7 ? 2 : 4;
   }
 }
 
@@ -39,7 +43,7 @@ function render(){
     if(v){
       c.textContent=v;
       c.setAttribute("v",v);
-      c.onclick=()=>select(i);
+      c.onclick=()=>selectCell(i);
     }
     if(i===selected) c.classList.add("active");
     gridEl.appendChild(c);
@@ -48,8 +52,8 @@ function render(){
   energyEl.textContent=energy;
 }
 
-/* SMART MERGE */
-function select(i){
+/* SMART MERGE (A VARIANT) */
+function selectCell(i){
   if(energy<=0) return;
 
   if(selected===null){
@@ -60,7 +64,9 @@ function select(i){
       score+=grid[i];
       grid[selected]=0;
       energy-=2;
-      add(2);
+
+      // A VARIANT: har bir birlashuvdan keyin majburiy son
+      spawn(1);
     }
     selected=null;
   }
@@ -70,8 +76,10 @@ function select(i){
 /* MENU ACTIONS */
 document.getElementById("clear").onclick=()=>{
   if(energy>=3){
-    grid[Math.floor(Math.random()*16)]=0;
+    let idx=Math.floor(Math.random()*16);
+    grid[idx]=0;
     energy-=3;
+    spawn(1);
     render();
   }
 };
@@ -81,7 +89,7 @@ document.getElementById("boost").onclick=()=>{
     grid[selected]*=2;
     score+=grid[selected];
     energy-=3;
-    add(1);
+    spawn(1);
     selected=null;
     render();
   }
