@@ -132,15 +132,25 @@ body::after {
 /* =========================
    NUMBER COLORS
 ========================= */
-.v2   { background: #3b4a7a; }
-.v4   { background: #445fa0; }
-.v8   { background: #4a7aff; }
-.v16  { background: #5a9cff; }
-.v32  { background: #ff8a3d; }
-.v64  { background: #ff6b2d; }
-.v128 { background: #ff4d4d; }
-.v256 { background: #ff2f6d; }
-.v512 { background: #d92cff; }
+/* Sovuq – aniq ajraladi */
+.v2    { background:#2d3a8c; color:#fff; }
+.v4    { background:#3b63c6; color:#fff; }
+.v8    { background:#2fb7ff; color:#000; }
+.v16   { background:#3dffcc; color:#000; }
+
+/* Issiq – ko‘zga uriladi */
+.v32   { background:#ffb347; color:#000; }
+.v64   { background:#ff8c42; color:#000; }
+.v128  { background:#ff5c5c; color:#fff; }
+.v256  { background:#ff2f92; color:#fff; }
+
+/* Premium / neon */
+.v512  { background:#b02fff; color:#fff; }
+.v1024 { background:#7a1fff; color:#fff; }
+.v2048 { background:#4b00ff; color:#fff; }
+.v4096 { background:#00e5ff; color:#000; }
+.v8192 { background:#00ff9c; color:#000; }
+.v16384{ background:#ffd700; color:#000; }
 
 /* =========================
    CONTROLS
