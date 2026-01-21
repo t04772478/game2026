@@ -24,18 +24,18 @@ document.addEventListener("DOMContentLoaded", () => {
   startGame();
   setInterval(autoEnergyRefill, 30 * 60 * 1000);
 });
-
-/* START */
+/* START GAME */
 function startGame() {
-  grid.fill(0);
-  score = 0;
-  energy = 50;
+  if (!loadGame()) {
+    grid.fill(0);
+    score = 0;
+    energy = 50;
+    spawnTwos(2);
+  }
   selectedIndex = null;
-  gameOver = false;
-
-  spawnTwos(2);
   render();
 }
+
 
 /* SPAWN */
 function spawnTwos(count) {
@@ -217,7 +217,37 @@ function render() {
     cell.onclick = () => onCellClick(i);
     board.appendChild(cell);
   });
+  
 
   scoreEl.textContent = score;
   energyEl.textContent = energy;
+saveGame();
+}
+
+
+  /***********************
+ * SAVE / LOAD GAME
+ ***********************/
+function saveGame() {
+  const data = {
+    grid,
+    score,
+    energy
+  };
+  localStorage.setItem("game2026", JSON.stringify(data));
+}
+
+function loadGame() {
+  const saved = localStorage.getItem("game2026");
+  if (!saved) return false;
+
+  try {
+    const data = JSON.parse(saved);
+    grid = data.grid || grid;
+    score = data.score || 0;
+    energy = data.energy ?? 50;
+    return true;
+  } catch {
+    return false;
+  }
 }
