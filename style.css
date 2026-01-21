@@ -319,7 +319,7 @@ body::after {
   }
 }
 
-.score.pop {
+#score.pop {
   animation: scorePop 0.4s ease;
 }
 
@@ -332,7 +332,7 @@ body::after {
   100% { background: rgba(255,0,0,0.15); }
 }
 
-.energy.low {
+#energy.low {
   animation: energyBlink 0.8s infinite;
   color: #ff4d4d;
 }
