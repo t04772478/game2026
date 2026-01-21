@@ -1,60 +1,78 @@
 /***********************
- * 2026 – FINAL LOGIC
+ * 2026 – FINAL LOGIC (STABLE)
  ***********************/
+
+/* =====================
+   CONFIG
+===================== */
 const ENERGY_MAX = 50;
 const ENERGY_PER_MINUTE = 2;
 
 const SIZE = 4;
 const TOTAL = SIZE * SIZE;
 
+/* =====================
+   GAME STATE
+===================== */
 let grid = [];
 let score = 0;
-let energy = 50;
+let energy = ENERGY_MAX;
 let selectedIndex = null;
 let gameOver = false;
 
-/* x2 limit */
+/* =====================
+   X2 LIMIT (24 soat)
+===================== */
 let x2Used = JSON.parse(localStorage.getItem("x2Used")) || 0;
 let x2ResetTime = JSON.parse(localStorage.getItem("x2Reset")) || Date.now();
 
-/* replace mode */
+/* =====================
+   REPLACE MODE
+===================== */
 let replaceMode = false;
 
-/* INIT */
+/* =====================
+   INIT
+===================== */
 document.addEventListener("DOMContentLoaded", () => {
   grid = Array(TOTAL).fill(0);
 
-  loadGame();              // 🔹 saqlangan o‘yinni yuklaydi
-  updateEnergyByTime();    // 🔹 vaqt bo‘yicha energiyani to‘g‘rilaydi
+  const hasSave = loadGame();
+  if (!hasSave) {
+    startNewGame();
+  }
 
+  updateEnergyByTime();
   render();
 });
+
+/* Har 1 daqiqada energiya tekshiradi (sahifa ochiq bo‘lsa ham) */
 setInterval(() => {
   updateEnergyByTime();
-}, 60000); // har 1 daqiqa
-
-/* START GAME */
-function startGame() {
-  if (!loadGame()) {
-    grid.fill(0);
-    score = 0;
-    energy = 50;
-    spawnTwos(2);
-  }
-  selectedIndex = null;
   render();
+}, 60000);
+
+/* =====================
+   NEW GAME
+===================== */
+function startNewGame() {
+  grid = Array(TOTAL).fill(0);
+  score = 0;
+  energy = ENERGY_MAX;
+  gameOver = false;
+  spawnTwos(2);
+  saveGame();
 }
 
-
-/* SPAWN */
+/* =====================
+   SPAWN
+===================== */
 function spawnTwos(count) {
   const empty = grid
-    .map((v, i) => v === 0 ? i : null)
+    .map((v, i) => (v === 0 ? i : null))
     .filter(v => v !== null);
 
-  const spawnCount = Math.min(count, empty.length);
-
-  for (let i = 0; i < spawnCount; i++) {
+  for (let i = 0; i < Math.min(count, empty.length); i++) {
     const index = empty.splice(
       Math.floor(Math.random() * empty.length), 1
     )[0];
@@ -62,11 +80,12 @@ function spawnTwos(count) {
   }
 }
 
-/* CELL CLICK */
+/* =====================
+   CELL CLICK
+===================== */
 function onCellClick(index) {
   if (gameOver) return;
 
-  /* REPLACE MODE */
   if (replaceMode) {
     showReplaceOptions(index);
     return;
@@ -89,7 +108,9 @@ function onCellClick(index) {
   tryMerge(selectedIndex, index);
 }
 
-/* MERGE */
+/* =====================
+   MERGE
+===================== */
 function tryMerge(a, b) {
   if (grid[a] !== grid[b]) {
     selectedIndex = null;
@@ -102,13 +123,14 @@ function tryMerge(a, b) {
 
   score += grid[b];
   energy--;
-localStorage.setItem("energyTime", Date.now());
-saveGame();
+
+  localStorage.setItem("energyTime", Date.now());
+  saveGame();
 
   if (energy <= 0) {
     energy = 0;
     gameOver = true;
-    alert("Energiya tugadi ⚡\n30 daqiqa kuting yoki + bosing");
+    alert("Energiya tugadi ⚡\nReklama ko‘ring yoki kuting");
   }
 
   selectedIndex = null;
@@ -120,7 +142,9 @@ saveGame();
   render();
 }
 
-/* 🔄 REPLACE */
+/* =====================
+   REPLACE (AD)
+===================== */
 function useReplace() {
   fakeAd(() => {
     replaceMode = true;
@@ -130,18 +154,20 @@ function useReplace() {
 
 function showReplaceOptions(index) {
   const choices = [2, 4, 8, 16, 32, 64];
-  const pick = prompt("Son tanlang:\n" + choices.join(", "));
-  const num = Number(pick);
+  const num = Number(prompt("Son tanlang:\n" + choices.join(", ")));
 
   if (choices.includes(num)) {
     grid[index] = num;
   }
 
   replaceMode = false;
+  saveGame();
   render();
 }
 
-/* ✖️ X2 */
+/* =====================
+   X2 (AD, 3 marta / 24 soat)
+===================== */
 function useX2() {
   resetX2IfNeeded();
 
@@ -161,6 +187,7 @@ function useX2() {
     localStorage.setItem("x2Used", JSON.stringify(x2Used));
     localStorage.setItem("x2Reset", JSON.stringify(x2ResetTime));
     selectedIndex = null;
+    saveGame();
     render();
   });
 }
@@ -172,41 +199,57 @@ function resetX2IfNeeded() {
   }
 }
 
-/* ❤️ DONATE */
+/* =====================
+   DONATE (3 ta uzun reklama)
+===================== */
 function donate() {
   fakeAd(() => {
     fakeAd(() => {
       fakeAd(() => {
         energy += 100;
+        if (energy > ENERGY_MAX) energy = ENERGY_MAX;
         x2Used = Math.max(x2Used - 1, 0);
         alert("Rahmat ❤️\n+100 energiya\n+1 x2");
+        saveGame();
         render();
       });
     });
   });
 }
 
-/* ⚡ ENERGY + */
+/* =====================
+   ENERGY BY AD
+===================== */
 function addEnergyByAd() {
   fakeAd(() => {
     energy += 20;
+    if (energy > ENERGY_MAX) energy = ENERGY_MAX;
     gameOver = false;
+    saveGame();
     render();
   });
 }
 
-function autoEnergyRefill() {
-  energy += 50;
-  gameOver = false;
-  render();
-}
-
-/* FAKE AD */
+/* =====================
+   FAKE AD
+   ⚠️ KEYIN SHU YERGA
+   YANDEX / ADMOB / TELEGRAM
+   REKLAMA ID QO‘SHILADI
+===================== */
 function fakeAd(cb) {
+  /*
+   BU YERGA:
+   - Yandex Ads blockId
+   - AdMob rewarded ad
+   - Telegram Ads
+   integratsiya qilinadi
+  */
   setTimeout(cb, 1200);
 }
 
-/* RENDER */
+/* =====================
+   RENDER
+===================== */
 function render() {
   const board = document.getElementById("board");
   const scoreEl = document.getElementById("score");
@@ -228,24 +271,19 @@ function render() {
     cell.onclick = () => onCellClick(i);
     board.appendChild(cell);
   });
-  
 
   scoreEl.textContent = score;
   energyEl.textContent = energy;
-saveGame();
 }
 
-
-  /***********************
- * SAVE / LOAD GAME
- ***********************/
+/* =====================
+   SAVE / LOAD
+===================== */
 function saveGame() {
-  const data = {
-    grid,
-    score,
-    energy
-  };
-  localStorage.setItem("game2026", JSON.stringify(data));
+  localStorage.setItem(
+    "game2026",
+    JSON.stringify({ grid, score, energy })
+  );
 }
 
 function loadGame() {
@@ -256,30 +294,37 @@ function loadGame() {
     const data = JSON.parse(saved);
     grid = data.grid || grid;
     score = data.score || 0;
-    energy = data.energy ?? 50;
-    updateEnergyByTime();
+    energy = data.energy ?? ENERGY_MAX;
     return true;
   } catch {
     return false;
   }
 }
+
+/* =====================
+   ENERGY BY TIME
+===================== */
 function updateEnergyByTime() {
-  const lastTime = localStorage.getItem("energyTime");
+  const lastTime = Number(localStorage.getItem("energyTime"));
+  const now = Date.now();
+
   if (!lastTime) {
-    localStorage.setItem("energyTime", Date.now());
+    localStorage.setItem("energyTime", now);
     return;
   }
 
-  const now = Date.now();
-  const diffMs = now - Number(lastTime);
-  const minutesPassed = Math.floor(diffMs / 60000);
+  const minutes = Math.floor((now - lastTime) / 60000);
+  if (minutes <= 0) return;
 
-  if (minutesPassed > 0) {
-    energy += minutesPassed * ENERGY_PER_MINUTE;
-    if (energy > ENERGY_MAX) energy = ENERGY_MAX;
+  energy = Math.min(
+    ENERGY_MAX,
+    energy + minutes * ENERGY_PER_MINUTE
+  );
 
-    // yangi vaqtni saqlaymiz
-    localStorage.setItem("energyTime", now);
-    saveGame();
-  }
+  localStorage.setItem(
+    "energyTime",
+    lastTime + minutes * 60000
+  );
+
+  saveGame();
 }
