@@ -326,16 +326,26 @@ body::after {
 /* =====================
    ENERGY WARNING
 ===================== */
-@keyframes energyBlink {
-  0% { background: rgba(255,0,0,0.15); }
-  50% { background: rgba(255,0,0,0.45); }
-  100% { background: rgba(255,0,0,0.15); }
+@keyframes energyPop {
+  0% {
+    transform: scale(1);
+    color: #ff4d4d;
+  }
+  50% {
+    transform: scale(1.4);
+    color: #ff0000;
+    text-shadow: 0 0 12px rgba(255,0,0,0.9);
+  }
+  100% {
+    transform: scale(1);
+    color: #ff4d4d;
+  }
 }
 
-#energy.low {
-  animation: energyBlink 0.8s infinite;
-  color: #ff4d4d;
+.energy.pop {
+  animation: energyPop 0.35s ease;
 }
+
 /* ======================
    UI FIXES (ADD-ON)
    ====================== */
