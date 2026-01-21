@@ -358,7 +358,7 @@ body::after {
 
   width: 32px;
   height: 32px;
-  border-radius: 50%;     /* 🔴 doira */
+  border-radius: 30%;     /* 🔴 doira */
   display: flex;
   align-items: center;
   justify-content: center;
