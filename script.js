@@ -1,6 +1,8 @@
 /***********************
  * 2026 – FINAL LOGIC
  ***********************/
+const ENERGY_MAX = 50;
+const ENERGY_PER_MINUTE = 2;
 
 const SIZE = 4;
 const TOTAL = SIZE * SIZE;
@@ -93,6 +95,8 @@ function tryMerge(a, b) {
 
   score += grid[b];
   energy--;
+localStorage.setItem("energyTime", Date.now());
+saveGame();
 
   if (energy <= 0) {
     energy = 0;
@@ -246,8 +250,29 @@ function loadGame() {
     grid = data.grid || grid;
     score = data.score || 0;
     energy = data.energy ?? 50;
+    updateEnergyByTime();
     return true;
   } catch {
     return false;
+  }
+}
+function updateEnergyByTime() {
+  const lastTime = localStorage.getItem("energyTime");
+  if (!lastTime) {
+    localStorage.setItem("energyTime", Date.now());
+    return;
+  }
+
+  const now = Date.now();
+  const diffMs = now - Number(lastTime);
+  const minutesPassed = Math.floor(diffMs / 60000);
+
+  if (minutesPassed > 0) {
+    energy += minutesPassed * ENERGY_PER_MINUTE;
+    if (energy > ENERGY_MAX) energy = ENERGY_MAX;
+
+    // yangi vaqtni saqlaymiz
+    localStorage.setItem("energyTime", now);
+    saveGame();
   }
 }
