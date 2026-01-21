@@ -353,10 +353,17 @@ body::after {
 
 .energy.low {
   animation: energyBlink 0.8s infinite;
-  background: rgba(255, 0, 0, 0.2);
-  border-radius: 8px;
-  padding: 2px 6px;
+  background: rgba(255, 60, 60, 0.35);
+  color: #fff;
+
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;     /* 🔴 doira */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 .energy-plus:hover {
   transform: scale(1.1);
