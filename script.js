@@ -11,6 +11,9 @@ const ENERGY_PER_MINUTE = 2;
 const SIZE = 4;
 const TOTAL = SIZE * SIZE;
 
+let lastScore = score;
+let lastEnergy = energy;
+
 /* =====================
    GAME STATE
 ===================== */
@@ -303,6 +306,23 @@ function render() {
 
   scoreEl.textContent = score;
   energyEl.textContent = energy;
+
+   /* === SCORE EFFECT === */
+if (score > lastScore) {
+  scoreEl.classList.remove("pop");
+  void scoreEl.offsetWidth; // animatsiyani qayta ishga tushirish
+  scoreEl.classList.add("pop");
+}
+lastScore = score;
+
+/* === ENERGY WARNING === */
+if (energy <= 10) {
+  energyEl.classList.add("low");
+} else {
+  energyEl.classList.remove("low");
+}
+lastEnergy = energy;
+
 }
 
 /* =====================
