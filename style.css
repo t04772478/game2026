@@ -369,3 +369,25 @@ body::after {
   transform: scale(1.1);
   box-shadow: 0 0 8px #2fdc8f;
 }
+/* =====================
+   ENERGY POP ANIMATION
+===================== */
+@keyframes energyPop {
+  0% {
+    transform: scale(1);
+    color: #ffffff;
+  }
+  50% {
+    transform: scale(1.35);
+    color: #ff4d4d;
+    text-shadow: 0 0 12px #ff4d4d;
+  }
+  100% {
+    transform: scale(1);
+    color: #ffffff;
+  }
+}
+
+.energy.pop {
+  animation: energyPop 0.4s ease;
+}
