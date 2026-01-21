@@ -379,13 +379,19 @@ body::after {
   }
   50% {
     transform: scale(1.35);
-    color: #ff4d4d;
-    text-shadow: 0 0 12px #ff4d4d;
+    color: #ff3b3b;
+    text-shadow: 0 0 12px #ff3b3b;
   }
   100% {
     transform: scale(1);
     color: #ffffff;
   }
+}
+
+.energy.pop {
+  animation: energyPop 0.4s ease;
+}
+
 }
 
 .energy.pop {
