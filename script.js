@@ -23,9 +23,16 @@ let replaceMode = false;
 /* INIT */
 document.addEventListener("DOMContentLoaded", () => {
   grid = Array(TOTAL).fill(0);
-  startGame();
-  setInterval(autoEnergyRefill, 30 * 60 * 1000);
+
+  loadGame();              // 🔹 saqlangan o‘yinni yuklaydi
+  updateEnergyByTime();    // 🔹 vaqt bo‘yicha energiyani to‘g‘rilaydi
+
+  render();
 });
+setInterval(() => {
+  updateEnergyByTime();
+}, 60000); // har 1 daqiqa
+
 /* START GAME */
 function startGame() {
   if (!loadGame()) {
