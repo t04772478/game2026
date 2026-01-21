@@ -20,7 +20,6 @@ let score = 0;
 let energy = ENERGY_MAX;
 let selectedIndex = null;
 let gameOver = false;
-
 let lastScore = score;
 let lastEnergy = energy;
 
