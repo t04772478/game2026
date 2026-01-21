@@ -11,8 +11,6 @@ const ENERGY_PER_MINUTE = 2;
 const SIZE = 4;
 const TOTAL = SIZE * SIZE;
 
-let lastScore = score;
-let lastEnergy = energy;
 
 /* =====================
    GAME STATE
@@ -22,6 +20,9 @@ let score = 0;
 let energy = ENERGY_MAX;
 let selectedIndex = null;
 let gameOver = false;
+
+let lastScore = score;
+let lastEnergy = energy;
 
 /* =====================
    X2 LIMIT (24 soat)
