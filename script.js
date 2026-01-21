@@ -38,13 +38,18 @@ document.addEventListener("DOMContentLoaded", () => {
   grid = Array(TOTAL).fill(0);
 
   const hasSave = loadGame();
-  if (!hasSave) {
+
+  // 👇 MUHIM TEKSHIRUV
+  const hasAnyNumber = grid.some(v => v > 0);
+
+  if (!hasSave || !hasAnyNumber) {
     startNewGame();
   }
 
   updateEnergyByTime();
   render();
 });
+
 
 /* Har 1 daqiqada energiya tekshiradi (sahifa ochiq bo‘lsa ham) */
 setInterval(() => {
