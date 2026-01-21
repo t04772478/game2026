@@ -77,11 +77,37 @@ function spawnTwos(count) {
     .map((v, i) => (v === 0 ? i : null))
     .filter(v => v !== null);
 
-  for (let i = 0; i < Math.min(count, empty.length); i++) {
+  const spawnCount = Math.min(count, empty.length);
+
+  for (let i = 0; i < spawnCount; i++) {
     const index = empty.splice(
       Math.floor(Math.random() * empty.length), 1
     )[0];
     grid[index] = 2;
+  }
+}
+
+/* =====================
+   SPAWN AFTER MERGE
+===================== */
+function spawnAfterMerge() {
+  const empty = grid
+    .map((v, i) => (v === 0 ? i : null))
+    .filter(v => v !== null);
+
+  if (empty.length === 0) return;
+
+  // Agar 1 ta bo‘sh bo‘lsa → 1 ta
+  // Agar 2 yoki undan ko‘p bo‘lsa → 2 ta
+  const spawnCount = empty.length === 1 ? 1 : 2;
+
+  for (let i = 0; i < spawnCount; i++) {
+    if (empty.length === 0) break; // 🛡️ xavfsizlik
+
+    const idx = empty.splice(
+      Math.floor(Math.random() * empty.length), 1
+    )[0];
+    grid[idx] = 2;
   }
 }
 
@@ -140,9 +166,7 @@ function tryMerge(a, b) {
 
   selectedIndex = null;
 
-  const emptyCount = grid.filter(v => v === 0).length;
-  if (emptyCount >= 2) spawnTwos(2);
-  else if (emptyCount === 1) spawnTwos(1);
+ spawnAfterMerge();
 
   render();
 }
