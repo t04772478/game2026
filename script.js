@@ -307,6 +307,15 @@ function render() {
   scoreEl.textContent = score;
   energyEl.textContent = energy;
 
+   /* === ENERGY POP EFFECT === */
+if (energy < lastEnergy) {
+  energyEl.classList.remove("pop");
+  void energyEl.offsetWidth; // animatsiyani qayta yoqadi
+  energyEl.classList.add("pop");
+}
+
+lastEnergy = energy;
+
    /* === SCORE EFFECT === */
 if (score > lastScore) {
   scoreEl.classList.remove("pop");
