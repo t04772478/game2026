@@ -159,7 +159,7 @@ function tryMerge(a, b) {
   energy--;
 
   localStorage.setItem("energyTime", Date.now());
-  saveGame();
+
 
   if (energy <= 0) {
     energy = 0;
@@ -170,7 +170,7 @@ function tryMerge(a, b) {
   selectedIndex = null;
 
  spawnAfterMerge();
-
+saveGame();
   render();
 }
 
