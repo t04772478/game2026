@@ -336,3 +336,29 @@ body::after {
   animation: energyBlink 0.8s infinite;
   color: #ff4d4d;
 }
+/* ======================
+   UI FIXES (ADD-ON)
+   ====================== */
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.score.pop {
+  animation: scorePop 0.4s ease;
+  color: #ff5c5c;
+}
+
+.energy.low {
+  animation: energyBlink 0.8s infinite;
+  background: rgba(255, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+.energy-plus:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px #2fdc8f;
+}
